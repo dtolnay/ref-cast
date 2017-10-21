@@ -72,7 +72,6 @@ impl Index<usize> for TileMap {
 }
 
 impl<'a> Index<usize> for Column<'a> {
-    # type Output = Tile;
     fn index(&self, y: usize) -> &Tile {
         &self.tilemap.storage[y * MAP_WIDTH + self.x]
     }

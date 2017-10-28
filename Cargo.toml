@@ -10,8 +10,5 @@ documentation = "https://docs.rs/ref-cast"
 [dependencies]
 ref-cast-impl = { version = "0.1", path = "derive" }
 
-[dev-dependencies]
-compiletest_rs = "0.2"
-
 [workspace]
 members = ["derive", "compiletest"]

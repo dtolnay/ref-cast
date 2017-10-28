@@ -6,6 +6,7 @@
 //! use ref_cast::RefCast;
 //!
 //! #[derive(RefCast)]
+//! #[repr(C)]
 //! struct U(String);
 //!
 //! fn main() {
@@ -105,6 +106,7 @@
 //! # }
 //! #
 //! #[derive(RefCast)]
+//! #[repr(C)]
 //! struct Strided([Tile]);
 //!
 //! // Implement `tilemap[x][y]` as `tilemap[x..][y * MAP_WIDTH]`.
@@ -143,10 +145,12 @@ pub use ref_cast_impl::*;
 /// #
 /// // `&String` can be cast to `&U`.
 /// #[derive(RefCast)]
+/// #[repr(C)]
 /// struct U(String);
 ///
 /// // `&T` can be cast to `&V<T>`.
 /// #[derive(RefCast)]
+/// #[repr(C)]
 /// struct V<T> {
 ///     t: T,
 /// }

@@ -21,6 +21,7 @@ extern crate ref_cast;
 use ref_cast::RefCast;
 
 #[derive(RefCast)]
+#[repr(C)]
 struct U(String);
 
 fn main() {
@@ -82,6 +83,7 @@ Here is a working approach using `RefCast`.
 
 ```rust
 #[derive(RefCast)]
+#[repr(C)]
 struct Strided([Tile]);
 
 // Implement `tilemap[x][y]` as `tilemap[x..][y * MAP_WIDTH]`.

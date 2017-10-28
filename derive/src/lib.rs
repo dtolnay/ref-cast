@@ -13,6 +13,10 @@ pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
     let source = input.to_string();
     let ast = syn::parse_derive_input(&source).unwrap();
 
+    if !has_repr_c(&ast) {
+        panic!("RefCast trait requires #[repr(C)] or #[repr(transparent)]");
+    }
+
     let name = &ast.ident;
     let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
     let from = only_field_ty(&ast);
@@ -61,6 +65,23 @@ pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
     };
 
     expanded.parse().unwrap()
+}
+
+fn has_repr_c(ast: &syn::DeriveInput) -> bool {
+    for attr in &ast.attrs {
+        if let syn::MetaItem::List(ref ident, ref nested) = attr.value {
+            if ident == "repr" && nested.len() == 1 {
+                if let syn::NestedMetaItem::MetaItem(ref inner) = nested[0] {
+                    if let syn::MetaItem::Word(ref ident) = *inner {
+                        if ident == "C" || ident == "transparent" {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    false
 }
 
 fn only_field_ty(ast: &syn::DeriveInput) -> &syn::Ty {

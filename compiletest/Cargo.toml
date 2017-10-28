@@ -1,0 +1,9 @@
+[package]
+name = "ref-cast-compiletest"
+version = "0.0.0"
+authors = ["David Tolnay <dtolnay@gmail.com>"]
+publish = false
+
+[dependencies]
+compiletest_rs = "0.2"
+ref-cast = { path = ".." }

@@ -14,4 +14,4 @@ ref-cast-impl = { version = "0.1", path = "derive" }
 compiletest_rs = "0.2"
 
 [workspace]
-members = ["derive"]
+members = ["derive", "compiletest"]

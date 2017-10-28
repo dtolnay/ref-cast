@@ -128,7 +128,7 @@
 //! # fn main() {}
 //! ```
 
-#![doc(html_root_url = "https://docs.rs/ref-cast/0.1.0")]
+#![doc(html_root_url = "https://docs.rs/ref-cast/0.2.0")]
 
 #[allow(unused_imports)]
 #[macro_use]

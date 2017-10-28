@@ -10,7 +10,7 @@ type `T`.
 
 ```toml
 [dependencies]
-ref-cast = "0.1"
+ref-cast = "0.2"
 ```
 
 ## Basic example

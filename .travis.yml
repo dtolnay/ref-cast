@@ -6,3 +6,7 @@ matrix:
     - rust: stable
     - rust: beta
     - rust: nightly
+
+script:
+  - cargo test
+  - cargo test --manifest-path compiletest/Cargo.toml

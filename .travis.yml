@@ -9,4 +9,7 @@ matrix:
 
 script:
   - cargo test
-  - cargo test --manifest-path compiletest/Cargo.toml
+  - |
+      if [ "${TRAVIS_RUST_VERSION}" = nightly ]; then
+          cargo test --manifest-path compiletest/Cargo.toml
+      fi

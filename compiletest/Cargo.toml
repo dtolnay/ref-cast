@@ -5,5 +5,5 @@ authors = ["David Tolnay <dtolnay@gmail.com>"]
 publish = false
 
 [dependencies]
-compiletest_rs = "0.2"
+compiletest_rs = "0.3"
 ref-cast = { path = ".." }

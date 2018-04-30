@@ -75,7 +75,7 @@ fn has_repr_c(ast: &DeriveInput) -> bool {
         if let Some(meta) = attr.interpret_meta() {
             if let Meta::List(meta) = meta {
                 if meta.ident == "repr" && meta.nested.len() == 1 {
-                    if let NestedMeta::Meta(ref inner) = meta.nested.first().unwrap().into_value() {
+                    if let NestedMeta::Meta(ref inner) = meta.nested[0] {
                         if let Meta::Word(ref ident) = *inner {
                             if ident == "C" || ident == "transparent" {
                                 return true;

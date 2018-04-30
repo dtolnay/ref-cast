@@ -1,5 +1,7 @@
 #![doc(html_root_url = "https://docs.rs/ref-cast-impl/0.2.0")]
 
+#![recursion_limit = "128"]
+
 extern crate proc_macro;
 use proc_macro::TokenStream;
 
@@ -8,10 +10,11 @@ extern crate syn;
 #[macro_use]
 extern crate quote;
 
+use syn::{Data, DeriveInput, Fields, Meta, NestedMeta, Type};
+
 #[proc_macro_derive(RefCast)]
 pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
-    let source = input.to_string();
-    let ast = syn::parse_derive_input(&source).unwrap();
+    let ast: DeriveInput = syn::parse(input).unwrap();
 
     if !has_repr_c(&ast) {
         panic!("RefCast trait requires #[repr(C)] or #[repr(transparent)]");
@@ -64,17 +67,19 @@ pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
         }
     };
 
-    expanded.parse().unwrap()
+    expanded.into()
 }
 
-fn has_repr_c(ast: &syn::DeriveInput) -> bool {
+fn has_repr_c(ast: &DeriveInput) -> bool {
     for attr in &ast.attrs {
-        if let syn::MetaItem::List(ref ident, ref nested) = attr.value {
-            if ident == "repr" && nested.len() == 1 {
-                if let syn::NestedMetaItem::MetaItem(ref inner) = nested[0] {
-                    if let syn::MetaItem::Word(ref ident) = *inner {
-                        if ident == "C" || ident == "transparent" {
-                            return true;
+        if let Some(meta) = attr.interpret_meta() {
+            if let Meta::List(meta) = meta {
+                if meta.ident == "repr" && meta.nested.len() == 1 {
+                    if let NestedMeta::Meta(ref inner) = meta.nested.first().unwrap().into_value() {
+                        if let Meta::Word(ref ident) = *inner {
+                            if ident == "C" || ident == "transparent" {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -84,11 +89,20 @@ fn has_repr_c(ast: &syn::DeriveInput) -> bool {
     false
 }
 
-fn only_field_ty(ast: &syn::DeriveInput) -> &syn::Ty {
-    let fields = match ast.body {
-        syn::Body::Struct(ref variant) => variant.fields(),
-        syn::Body::Enum(_) => {
+fn only_field_ty(ast: &DeriveInput) -> &Type {
+    let fields = match ast.data {
+        Data::Struct(ref data) => match data.fields {
+            Fields::Named(ref fields) => &fields.named,
+            Fields::Unnamed(ref fields) => &fields.unnamed,
+            Fields::Unit => {
+                panic!("RefCast does not support unit structs");
+            }
+        },
+        Data::Enum(_) => {
             panic!("RefCast does not support enums");
+        }
+        Data::Union(_) => {
+            panic!("RefCast does not support unions");
         }
     };
 

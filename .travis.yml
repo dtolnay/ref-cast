@@ -3,15 +3,23 @@ language: rust
 
 matrix:
   include:
-    - rust; 1.15.0
+    - rust: 1.15.0
     - rust: stable
     - rust: beta
     - rust: nightly
 
 script:
-  - cargo test
   - |
-      if [ "${TRAVIS_RUST_VERSION}" = nightly ]; then
-          cargo clean
-          cargo test --manifest-path compiletest/Cargo.toml
-      fi
+      case "$TRAVIS_RUST_VERSION" in
+          1.15.0)
+              cargo build
+              ;;
+          nightly)
+              cargo test
+              cargo clean
+              cargo test --manifest-path compiletest/Cargo.toml
+              ;;
+          *)
+              cargo test
+              ;;
+      esac

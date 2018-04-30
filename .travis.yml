@@ -12,5 +12,6 @@ script:
   - cargo test
   - |
       if [ "${TRAVIS_RUST_VERSION}" = nightly ]; then
+          cargo clean
           cargo test --manifest-path compiletest/Cargo.toml
       fi

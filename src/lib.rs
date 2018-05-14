@@ -130,6 +130,7 @@
 
 #![doc(html_root_url = "https://docs.rs/ref-cast/0.2.1")]
 
+#[cfg_attr(feature = "cargo-clippy", allow(useless_attribute))]
 #[allow(unused_imports)]
 #[macro_use]
 extern crate ref_cast_impl;

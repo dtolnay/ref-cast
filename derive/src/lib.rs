@@ -53,7 +53,7 @@ pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
                 //                      _core::mem::align_of::<Self>());
 
                 unsafe {
-                    _core::mem::transmute::<&Self::From, &Self>(_from)
+                    &*(_from as *const Self::From as *const Self)
                 }
             }
 
@@ -61,7 +61,7 @@ pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
             fn ref_cast_mut(_from: &mut Self::From) -> &mut Self {
                 extern crate core as _core;
                 unsafe {
-                    _core::mem::transmute::<&mut Self::From, &mut Self>(_from)
+                    &mut *(_from as *mut Self::From as *mut Self)
                 }
             }
         }

@@ -12,3 +12,6 @@ ref-cast-impl = { version = "0.2", path = "derive" }
 
 [workspace]
 members = ["derive", "compiletest"]
+
+[badges]
+travis-ci = { repository = "dtolnay/ref-cast" }

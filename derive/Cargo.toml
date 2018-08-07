@@ -14,3 +14,6 @@ proc-macro = true
 [dependencies]
 syn = "0.14"
 quote = "0.6"
+
+[badges]
+travis-ci = { repository = "dtolnay/ref-cast" }

@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/ref-cast-impl/0.2.3")]
+#![doc(html_root_url = "https://docs.rs/ref-cast-impl/0.2.4")]
 
 #![recursion_limit = "128"]
 

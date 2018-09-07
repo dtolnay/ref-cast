@@ -5,6 +5,7 @@
 extern crate proc_macro;
 use proc_macro::TokenStream;
 
+#[macro_use]
 extern crate syn;
 
 #[macro_use]
@@ -14,7 +15,7 @@ use syn::{Data, DeriveInput, Fields, Meta, NestedMeta, Type};
 
 #[proc_macro_derive(RefCast)]
 pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
-    let ast: DeriveInput = syn::parse(input).unwrap();
+    let ast = parse_macro_input!(input as DeriveInput);
 
     if !has_repr_c(&ast) {
         panic!("RefCast trait requires #[repr(C)] or #[repr(transparent)]");

@@ -12,7 +12,7 @@ name = "ref_cast_impl"
 proc-macro = true
 
 [dependencies]
-syn = "0.14"
+syn = "0.15"
 quote = "0.6"
 
 [badges]

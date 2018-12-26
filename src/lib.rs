@@ -128,7 +128,7 @@
 //! # fn main() {}
 //! ```
 
-#![doc(html_root_url = "https://docs.rs/ref-cast/0.2.4")]
+#![doc(html_root_url = "https://docs.rs/ref-cast/0.2.5")]
 
 #[cfg_attr(feature = "cargo-clippy", allow(useless_attribute))]
 #[allow(unused_imports)]

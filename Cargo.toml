@@ -6,6 +6,7 @@ license = "MIT/Apache-2.0"
 description = "Safely cast &T to &U where the struct U contains a single field of type T."
 repository = "https://github.com/dtolnay/ref-cast"
 documentation = "https://docs.rs/ref-cast"
+readme = "README.md"
 
 [dependencies]
 ref-cast-impl = { version = "0.2", path = "derive" }

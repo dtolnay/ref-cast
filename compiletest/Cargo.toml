@@ -4,6 +4,10 @@ version = "0.0.0"
 authors = ["David Tolnay <dtolnay@gmail.com>"]
 publish = false
 
+[[bin]]
+name = "ref-cast-compiletest"
+path = "main.rs"
+
 [dependencies]
 compiletest_rs = { version = "0.3", features = ["stable"] }
 ref-cast = { path = ".." }

@@ -1,0 +1,10 @@
+error: proc-macro derive panicked
+ --> $DIR/no-repr.rs:4:10
+  |
+4 | #[derive(RefCast)]
+  |          ^^^^^^^
+  |
+  = help: message: RefCast trait req$DIRres #[repr(C)] or #[repr(transparent)]
+
+error: aborting due to previous error
+

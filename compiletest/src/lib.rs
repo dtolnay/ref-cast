@@ -5,8 +5,8 @@ extern crate compiletest_rs as compiletest;
 #[test]
 fn compile_fail() {
     let mut config = compiletest::Config {
-        mode: compiletest::common::Mode::CompileFail,
-        src_base: std::path::PathBuf::from("compile-fail"),
+        mode: compiletest::common::Mode::Ui,
+        src_base: std::path::PathBuf::from("ui"),
         ..Default::default()
     };
 

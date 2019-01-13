@@ -7,6 +7,13 @@ fn compile_fail() {
     let mut config = compiletest::Config {
         mode: compiletest::common::Mode::Ui,
         src_base: std::path::PathBuf::from("ui"),
+        target_rustcflags: Some(String::from(
+            "\
+             --edition=2018 \
+             -Z unstable-options \
+             --extern ref_cast \
+             ",
+        )),
         ..Default::default()
     };
 

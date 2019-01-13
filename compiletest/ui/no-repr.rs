@@ -1,5 +1,4 @@
-#[macro_use]
-extern crate ref_cast;
+use ref_cast::RefCast;
 
 #[derive(RefCast)]
 struct Test {

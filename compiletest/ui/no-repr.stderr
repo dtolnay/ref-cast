@@ -1,7 +1,7 @@
 error: proc-macro derive panicked
- --> $DIR/no-repr.rs:4:10
+ --> $DIR/no-repr.rs:3:10
   |
-4 | #[derive(RefCast)]
+3 | #[derive(RefCast)]
   |          ^^^^^^^
   |
   = help: message: RefCast trait req$DIRres #[repr(C)] or #[repr(transparent)]

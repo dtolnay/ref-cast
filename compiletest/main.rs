@@ -14,6 +14,7 @@ fn compile_fail() {
              --extern ref_cast \
              ",
         )),
+        build_base: std::path::PathBuf::from("../target/ui"),
         ..Default::default()
     };
 

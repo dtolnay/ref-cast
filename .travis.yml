@@ -3,7 +3,7 @@ language: rust
 
 matrix:
   include:
-    - rust: 1.15.0
+    - rust: 1.31.0
     - rust: stable
     - rust: beta
     - rust: nightly
@@ -11,9 +11,6 @@ matrix:
 script:
   - |
       case "$TRAVIS_RUST_VERSION" in
-          1.15.0)
-              cargo build
-              ;;
           nightly)
               cargo test
               cargo clean

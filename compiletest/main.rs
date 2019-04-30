@@ -1,7 +1,5 @@
 #![cfg(test)]
 
-extern crate compiletest_rs as compiletest;
-
 #[test]
 fn compile_fail() {
     let mut config = compiletest::Config {

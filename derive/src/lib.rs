@@ -1,15 +1,10 @@
 #![recursion_limit = "128"]
 
 extern crate proc_macro;
+
 use proc_macro::TokenStream;
-
-#[macro_use]
-extern crate syn;
-
-#[macro_use]
-extern crate quote;
-
-use syn::{Data, DeriveInput, Fields, Meta, NestedMeta, Type};
+use quote::quote;
+use syn::{parse_macro_input, Data, DeriveInput, Fields, Meta, NestedMeta, Type};
 
 #[proc_macro_derive(RefCast)]
 pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
@@ -29,8 +24,6 @@ pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
 
             #[inline]
             fn ref_cast(_from: &Self::From) -> &Self {
-                extern crate core as _core;
-
                 // TODO: assert that `Self::From` and `Self` have the same size
                 // and alignment.
                 //
@@ -58,7 +51,6 @@ pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
 
             #[inline]
             fn ref_cast_mut(_from: &mut Self::From) -> &mut Self {
-                extern crate core as _core;
                 unsafe {
                     &mut *(_from as *mut Self::From as *mut Self)
                 }

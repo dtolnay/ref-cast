@@ -16,8 +16,6 @@ ref-cast = "0.2"
 ## Basic example
 
 ```rust
-#[macro_use]
-extern crate ref_cast;
 use ref_cast::RefCast;
 
 #[derive(RefCast)]

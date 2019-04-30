@@ -1,8 +1,6 @@
 //! # Basic example
 //!
-//! ```rust
-//! #[macro_use]
-//! extern crate ref_cast;
+//! ```
 //! use ref_cast::RefCast;
 //!
 //! #[derive(RefCast)]
@@ -24,7 +22,7 @@
 //! operation that works in column-major order because it is more intuitive in
 //! the context of our application.
 //!
-//! ```rust
+//! ```
 //! const MAP_WIDTH: usize = 4;
 //!
 //! struct Tile(u8);
@@ -42,7 +40,7 @@
 //!
 //! [`Index`]: https://doc.rust-lang.org/std/ops/trait.Index.html
 //!
-//! ```rust
+//! ```
 //! # const MAP_WIDTH: usize = 4;
 //! #
 //! # struct Tile(u8);
@@ -90,11 +88,8 @@
 //!
 //! Here is a working approach using `RefCast`.
 //!
-//! ```rust
-//! # #[macro_use]
-//! # extern crate ref_cast;
+//! ```
 //! # use ref_cast::RefCast;
-//! #
 //! # use std::ops::Index;
 //! #
 //! # const MAP_WIDTH: usize = 4;
@@ -130,19 +125,14 @@
 
 #![doc(html_root_url = "https://docs.rs/ref-cast/0.2.5")]
 
-#[cfg_attr(feature = "cargo-clippy", allow(useless_attribute))]
-#[allow(unused_imports)]
-#[macro_use]
-extern crate ref_cast_impl;
 #[doc(hidden)]
 pub use ref_cast_impl::*;
 
 /// Safely cast `&T` to `&U` where the struct `U` contains a single field of
 /// type `T`.
 ///
-/// ```rust
-/// # #[macro_use]
-/// # extern crate ref_cast;
+/// ```
+/// # use ref_cast::RefCast;
 /// #
 /// // `&String` can be cast to `&U`.
 /// #[derive(RefCast)]

@@ -73,8 +73,8 @@ fn has_repr_c(input: &DeriveInput) -> bool {
         if let Some(meta) = attr.interpret_meta() {
             if let Meta::List(meta) = meta {
                 if meta.ident == "repr" && meta.nested.len() == 1 {
-                    if let NestedMeta::Meta(ref inner) = meta.nested[0] {
-                        if let Meta::Word(ref ident) = *inner {
+                    if let NestedMeta::Meta(inner) = &meta.nested[0] {
+                        if let Meta::Word(ident) = inner {
                             if ident == "C" || ident == "transparent" {
                                 return true;
                             }
@@ -88,10 +88,10 @@ fn has_repr_c(input: &DeriveInput) -> bool {
 }
 
 fn only_field_ty(input: &DeriveInput) -> Result<&Type> {
-    let fields = match input.data {
-        Data::Struct(ref data) => match data.fields {
-            Fields::Named(ref fields) => &fields.named,
-            Fields::Unnamed(ref fields) => &fields.unnamed,
+    let fields = match &input.data {
+        Data::Struct(data) => match &data.fields {
+            Fields::Named(fields) => &fields.named,
+            Fields::Unnamed(fields) => &fields.unnamed,
             Fields::Unit => {
                 return Err("RefCast does not support unit structs");
             }

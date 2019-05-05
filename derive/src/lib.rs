@@ -8,15 +8,15 @@ use syn::{parse_macro_input, Data, DeriveInput, Fields, Meta, NestedMeta, Type};
 
 #[proc_macro_derive(RefCast)]
 pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
-    let ast = parse_macro_input!(input as DeriveInput);
+    let input = parse_macro_input!(input as DeriveInput);
 
-    if !has_repr_c(&ast) {
+    if !has_repr_c(&input) {
         panic!("RefCast trait requires #[repr(C)] or #[repr(transparent)]");
     }
 
-    let name = &ast.ident;
-    let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
-    let from = only_field_ty(&ast);
+    let name = &input.ident;
+    let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
+    let from = only_field_ty(&input);
 
     let expanded = quote! {
         impl #impl_generics ::ref_cast::RefCast for #name #ty_generics #where_clause {
@@ -61,8 +61,8 @@ pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
     expanded.into()
 }
 
-fn has_repr_c(ast: &DeriveInput) -> bool {
-    for attr in &ast.attrs {
+fn has_repr_c(input: &DeriveInput) -> bool {
+    for attr in &input.attrs {
         if let Some(meta) = attr.interpret_meta() {
             if let Meta::List(meta) = meta {
                 if meta.ident == "repr" && meta.nested.len() == 1 {
@@ -80,8 +80,8 @@ fn has_repr_c(ast: &DeriveInput) -> bool {
     false
 }
 
-fn only_field_ty(ast: &DeriveInput) -> &Type {
-    let fields = match ast.data {
+fn only_field_ty(input: &DeriveInput) -> &Type {
+    let fields = match input.data {
         Data::Struct(ref data) => match data.fields {
             Fields::Named(ref fields) => &fields.named,
             Fields::Unnamed(ref fields) => &fields.unnamed,

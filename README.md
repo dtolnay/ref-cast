@@ -30,6 +30,10 @@ fn main() {
 }
 ```
 
+Note that either of `#[repr(C)]` or `#[repr(transparent)]` is required in order
+for the conversion to be sound. The derive macro will refuse to compile if
+neither is present.
+
 ## Realistic example
 
 Suppose we have a multidimensional array represented in a flat buffer in

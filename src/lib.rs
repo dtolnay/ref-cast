@@ -1,3 +1,6 @@
+//! This crate provides a derive macro for generating safe conversions from `&T`
+//! to `&U` where the struct `U` contains a single field of type `T`.
+//!
 //! # Basic example
 //!
 //! ```

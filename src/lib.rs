@@ -127,7 +127,7 @@
 //! # fn main() {}
 //! ```
 
-#![doc(html_root_url = "https://docs.rs/ref-cast/0.2.5")]
+#![doc(html_root_url = "https://docs.rs/ref-cast/0.2.6")]
 
 #[doc(hidden)]
 pub use ref_cast_impl::*;

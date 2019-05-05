@@ -4,7 +4,7 @@
 fn compile_fail() {
     let mut config = compiletest::Config {
         mode: compiletest::common::Mode::Ui,
-        src_base: std::path::PathBuf::from("ui"),
+        src_base: std::path::PathBuf::from("./ui"),
         target_rustcflags: Some(String::from(
             "\
              --edition=2018 \

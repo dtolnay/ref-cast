@@ -3,22 +3,31 @@
 extern crate proc_macro;
 
 use proc_macro::TokenStream;
+use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::{parse_macro_input, Data, DeriveInput, Fields, Meta, NestedMeta, Type};
+
+type Result<T> = std::result::Result<T, &'static str>;
 
 #[proc_macro_derive(RefCast)]
 pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
+    let expanded = expand(input).unwrap_or_else(|error| quote! {
+        compile_error! { #error }
+    });
+    TokenStream::from(expanded)
+}
 
+fn expand(input: DeriveInput) -> Result<TokenStream2> {
     if !has_repr_c(&input) {
-        panic!("RefCast trait requires #[repr(C)] or #[repr(transparent)]");
+        return Err("RefCast trait requires #[repr(C)] or #[repr(transparent)]");
     }
 
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
-    let from = only_field_ty(&input);
+    let from = only_field_ty(&input)?;
 
-    let expanded = quote! {
+    Ok(quote! {
         impl #impl_generics ::ref_cast::RefCast for #name #ty_generics #where_clause {
             type From = #from;
 
@@ -56,9 +65,7 @@ pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
                 }
             }
         }
-    };
-
-    expanded.into()
+    })
 }
 
 fn has_repr_c(input: &DeriveInput) -> bool {
@@ -80,28 +87,28 @@ fn has_repr_c(input: &DeriveInput) -> bool {
     false
 }
 
-fn only_field_ty(input: &DeriveInput) -> &Type {
+fn only_field_ty(input: &DeriveInput) -> Result<&Type> {
     let fields = match input.data {
         Data::Struct(ref data) => match data.fields {
             Fields::Named(ref fields) => &fields.named,
             Fields::Unnamed(ref fields) => &fields.unnamed,
             Fields::Unit => {
-                panic!("RefCast does not support unit structs");
+                return Err("RefCast does not support unit structs");
             }
         },
         Data::Enum(_) => {
-            panic!("RefCast does not support enums");
+            return Err("RefCast does not support enums");
         }
         Data::Union(_) => {
-            panic!("RefCast does not support unions");
+            return Err("RefCast does not support unions");
         }
     };
 
     // TODO: support structs that have trivial other fields like `()` or
     // `PhantomData`.
     if fields.len() != 1 {
-        panic!("RefCast requires a struct with a single field");
+        return Err("RefCast requires a struct with a single field");
     }
 
-    &fields[0].ty
+    Ok(&fields[0].ty)
 }

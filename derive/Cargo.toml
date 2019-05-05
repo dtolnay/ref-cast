@@ -13,8 +13,9 @@ name = "ref_cast_impl"
 proc-macro = true
 
 [dependencies]
-syn = "0.15"
+proc-macro2 = "0.4"
 quote = "0.6"
+syn = "0.15"
 
 [badges]
 travis-ci = { repository = "dtolnay/ref-cast" }

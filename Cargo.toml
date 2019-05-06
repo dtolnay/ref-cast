@@ -12,8 +12,12 @@ readme = "README.md"
 [dependencies]
 ref-cast-impl = { version = "0.2", path = "derive" }
 
+[dev-dependencies]
+select-rustc = "0.1"
+trybuild = "1.0"
+
 [workspace]
-members = ["derive", "compiletest"]
+members = ["derive"]
 
 [badges]
 travis-ci = { repository = "dtolnay/ref-cast" }

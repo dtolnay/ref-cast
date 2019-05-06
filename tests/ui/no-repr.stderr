@@ -3,6 +3,3 @@ error: RefCast trait requires #[repr(C)] or #[repr(transparent)]
   |
 3 | #[derive(RefCast)]
   |          ^^^^^^^
-
-error: aborting due to previous error
-

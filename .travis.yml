@@ -1,22 +1,11 @@
 sudo: false
 language: rust
 
-matrix:
-  include:
-    - rust: 1.31.0
-    - rust: stable
-    - rust: beta
-    - rust: nightly
+rust:
+  - 1.31.0
+  - stable
+  - beta
+  - nightly
 
 script:
-  - |
-      case "$TRAVIS_RUST_VERSION" in
-          nightly)
-              cargo test
-              cargo clean
-              cargo test --manifest-path compiletest/Cargo.toml
-              ;;
-          *)
-              cargo test
-              ;;
-      esac
+  - cargo test

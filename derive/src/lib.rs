@@ -70,15 +70,11 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
 
 fn has_repr_c(input: &DeriveInput) -> bool {
     for attr in &input.attrs {
-        if let Some(meta) = attr.interpret_meta() {
-            if let Meta::List(meta) = meta {
-                if meta.ident == "repr" && meta.nested.len() == 1 {
-                    if let NestedMeta::Meta(inner) = &meta.nested[0] {
-                        if let Meta::Word(ident) = inner {
-                            if ident == "C" || ident == "transparent" {
-                                return true;
-                            }
-                        }
+        if let Some(Meta::List(meta)) = attr.interpret_meta() {
+            if meta.ident == "repr" && meta.nested.len() == 1 {
+                if let NestedMeta::Meta(Meta::Word(ident)) = &meta.nested[0] {
+                    if ident == "C" || ident == "transparent" {
+                        return true;
                     }
                 }
             }

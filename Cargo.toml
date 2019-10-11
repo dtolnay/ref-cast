@@ -13,7 +13,7 @@ readme = "README.md"
 ref-cast-impl = { version = "=0.2.7", path = "derive" }
 
 [dev-dependencies]
-rustversion = "0.1"
+rustversion = "1.0"
 trybuild = "1.0"
 
 [workspace]

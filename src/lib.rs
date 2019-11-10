@@ -129,6 +129,9 @@
 //! ```
 
 #![doc(html_root_url = "https://docs.rs/ref-cast/0.2.7")]
+#![no_std]
+
+mod trivial;
 
 pub use ref_cast_impl::RefCast;
 
@@ -156,4 +159,10 @@ pub trait RefCast {
     type From: ?Sized;
     fn ref_cast(from: &Self::From) -> &Self;
     fn ref_cast_mut(from: &mut Self::From) -> &mut Self;
+}
+
+// Not public API.
+#[doc(hidden)]
+pub mod private {
+    pub use crate::trivial::assert_trivial;
 }

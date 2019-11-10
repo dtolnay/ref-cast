@@ -29,7 +29,19 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
 
     let fields = fields(&input)?;
     let from = only_field_ty(fields)?;
-    let _trivial = trivial_fields(fields)?;
+    let trivial = trivial_fields(fields)?;
+
+    let assert_trivial_fields = if !trivial.is_empty() {
+        Some(quote! {
+            if false {
+                #(
+                    ::ref_cast::private::assert_trivial::<#trivial>();
+                )*
+            }
+        })
+    } else {
+        None
+    };
 
     Ok(quote! {
         impl #impl_generics ::ref_cast::RefCast for #name #ty_generics #where_clause {
@@ -57,6 +69,7 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
                 //     debug_assert_eq!(_core::mem::align_of::<Self::From>(),
                 //                      _core::mem::align_of::<Self>());
 
+                #assert_trivial_fields
                 unsafe {
                     &*(_from as *const Self::From as *const Self)
                 }

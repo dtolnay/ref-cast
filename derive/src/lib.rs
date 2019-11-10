@@ -3,12 +3,13 @@ extern crate proc_macro;
 use proc_macro::TokenStream;
 use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::quote;
+use syn::parse::Nothing;
 use syn::punctuated::Punctuated;
 use syn::{
     parse_macro_input, Data, DeriveInput, Error, Field, Meta, NestedMeta, Result, Token, Type,
 };
 
-#[proc_macro_derive(RefCast)]
+#[proc_macro_derive(RefCast, attributes(trivial))]
 pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     expand(input)
@@ -126,6 +127,7 @@ fn fields(input: &DeriveInput) -> Result<&Fields> {
 }
 
 fn only_field_ty(fields: &Fields) -> Result<&Type> {
+    let is_trivial = decide_trivial(fields)?;
     let mut only_field = None;
 
     for field in fields {
@@ -146,6 +148,7 @@ fn only_field_ty(fields: &Fields) -> Result<&Type> {
 }
 
 fn trivial_fields(fields: &Fields) -> Result<Vec<&Type>> {
+    let is_trivial = decide_trivial(fields)?;
     let mut trivial = Vec::new();
 
     for field in fields {
@@ -157,10 +160,29 @@ fn trivial_fields(fields: &Fields) -> Result<Vec<&Type>> {
     Ok(trivial)
 }
 
-fn is_trivial(field: &Field) -> Result<bool> {
+fn decide_trivial(fields: &Fields) -> Result<fn(&Field) -> Result<bool>> {
+    for field in fields {
+        if is_explicit_trivial(field)? {
+            return Ok(is_explicit_trivial);
+        }
+    }
+    Ok(is_implicit_trivial)
+}
+
+fn is_implicit_trivial(field: &Field) -> Result<bool> {
     match &field.ty {
         Type::Tuple(ty) => Ok(ty.elems.is_empty()),
         Type::Path(ty) => Ok(ty.path.segments.last().unwrap().ident == "PhantomData"),
         _ => Ok(false),
     }
+}
+
+fn is_explicit_trivial(field: &Field) -> Result<bool> {
+    for attr in &field.attrs {
+        if attr.path.is_ident("trivial") {
+            syn::parse2::<Nothing>(attr.tokens.clone())?;
+            return Ok(true);
+        }
+    }
+    Ok(false)
 }

@@ -126,8 +126,6 @@
 //!         &self.0[y * MAP_WIDTH]
 //!     }
 //! }
-//! #
-//! # fn main() {}
 //! ```
 
 #![doc(html_root_url = "https://docs.rs/ref-cast/0.2.7")]
@@ -152,8 +150,6 @@ pub use ref_cast_impl::*;
 /// struct V<T> {
 ///     t: T,
 /// }
-/// #
-/// # fn main() {}
 /// ```
 ///
 /// See the crate-level documentation for usage examples!

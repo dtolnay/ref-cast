@@ -3,7 +3,10 @@ extern crate proc_macro;
 use proc_macro::TokenStream;
 use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::quote;
-use syn::{parse_macro_input, Data, DeriveInput, Error, Fields, Meta, NestedMeta, Result, Type};
+use syn::punctuated::Punctuated;
+use syn::{
+    parse_macro_input, Data, DeriveInput, Error, Field, Meta, NestedMeta, Result, Token, Type,
+};
 
 #[proc_macro_derive(RefCast)]
 pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
@@ -23,7 +26,9 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
 
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
-    let from = only_field_ty(&input)?;
+
+    let fields = fields(&input)?;
+    let from = only_field_ty(fields)?;
 
     Ok(quote! {
         impl #impl_generics ::ref_cast::RefCast for #name #ty_generics #where_clause {
@@ -81,32 +86,32 @@ fn has_repr_c(input: &DeriveInput) -> bool {
     false
 }
 
-fn only_field_ty(input: &DeriveInput) -> Result<&Type> {
-    let fields = match &input.data {
-        Data::Struct(data) => match &data.fields {
-            Fields::Named(fields) => &fields.named,
-            Fields::Unnamed(fields) => &fields.unnamed,
-            Fields::Unit => {
-                return Err(Error::new(
-                    Span::call_site(),
-                    "RefCast does not support unit structs",
-                ));
-            }
-        },
-        Data::Enum(_) => {
-            return Err(Error::new(
-                Span::call_site(),
-                "RefCast does not support enums",
-            ));
-        }
-        Data::Union(_) => {
-            return Err(Error::new(
-                Span::call_site(),
-                "RefCast does not support unions",
-            ));
-        }
-    };
+type Fields = Punctuated<Field, Token![,]>;
 
+fn fields(input: &DeriveInput) -> Result<&Fields> {
+    use syn::Fields;
+
+    match &input.data {
+        Data::Struct(data) => match &data.fields {
+            Fields::Named(fields) => Ok(&fields.named),
+            Fields::Unnamed(fields) => Ok(&fields.unnamed),
+            Fields::Unit => Err(Error::new(
+                Span::call_site(),
+                "RefCast does not support unit structs",
+            )),
+        },
+        Data::Enum(_) => Err(Error::new(
+            Span::call_site(),
+            "RefCast does not support enums",
+        )),
+        Data::Union(_) => Err(Error::new(
+            Span::call_site(),
+            "RefCast does not support unions",
+        )),
+    }
+}
+
+fn only_field_ty(fields: &Fields) -> Result<&Type> {
     // TODO: support structs that have trivial other fields like `()` or
     // `PhantomData`.
     if fields.len() != 1 {

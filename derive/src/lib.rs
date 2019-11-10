@@ -157,7 +157,10 @@ fn trivial_fields(fields: &Fields) -> Result<Vec<&Type>> {
     Ok(trivial)
 }
 
-fn is_trivial(_field: &Field) -> Result<bool> {
-    // TODO: identify fields like () and PhantomData
-    Ok(false)
+fn is_trivial(field: &Field) -> Result<bool> {
+    match &field.ty {
+        Type::Tuple(ty) => Ok(ty.elems.is_empty()),
+        Type::Path(ty) => Ok(ty.path.segments.last().unwrap().ident == "PhantomData"),
+        _ => Ok(false),
+    }
 }

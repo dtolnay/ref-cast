@@ -130,8 +130,7 @@
 
 #![doc(html_root_url = "https://docs.rs/ref-cast/0.2.7")]
 
-#[doc(hidden)]
-pub use ref_cast_impl::*;
+pub use ref_cast_impl::RefCast;
 
 /// Safely cast `&T` to `&U` where the struct `U` contains a single field of
 /// type `T`.

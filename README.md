@@ -93,7 +93,7 @@ impl Index<usize> for TileMap {
     type Output = Strided;
     fn index(&self, x: usize) -> &Self::Output {
         assert!(x < MAP_WIDTH);
-        RefCast::ref_cast(&self.storage[x..])
+        Strided::ref_cast(&self.storage[x..])
     }
 }
 

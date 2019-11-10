@@ -29,6 +29,7 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
 
     let fields = fields(&input)?;
     let from = only_field_ty(fields)?;
+    let _trivial = trivial_fields(fields)?;
 
     Ok(quote! {
         impl #impl_generics ::ref_cast::RefCast for #name #ty_generics #where_clause {
@@ -112,14 +113,38 @@ fn fields(input: &DeriveInput) -> Result<&Fields> {
 }
 
 fn only_field_ty(fields: &Fields) -> Result<&Type> {
-    // TODO: support structs that have trivial other fields like `()` or
-    // `PhantomData`.
-    if fields.len() != 1 {
-        return Err(Error::new(
-            Span::call_site(),
-            "RefCast requires a struct with a single field",
-        ));
+    let mut only_field = None;
+
+    for field in fields {
+        if !is_trivial(field)? {
+            if only_field.take().is_some() {
+                break;
+            }
+            only_field = Some(&field.ty);
+        }
     }
 
-    Ok(&fields[0].ty)
+    only_field.ok_or_else(|| {
+        Error::new(
+            Span::call_site(),
+            "RefCast requires a struct with a single field",
+        )
+    })
+}
+
+fn trivial_fields(fields: &Fields) -> Result<Vec<&Type>> {
+    let mut trivial = Vec::new();
+
+    for field in fields {
+        if is_trivial(field)? {
+            trivial.push(&field.ty);
+        }
+    }
+
+    Ok(trivial)
+}
+
+fn is_trivial(_field: &Field) -> Result<bool> {
+    // TODO: identify fields like () and PhantomData
+    Ok(false)
 }

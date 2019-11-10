@@ -3,24 +3,24 @@
 extern crate proc_macro;
 
 use proc_macro::TokenStream;
-use proc_macro2::TokenStream as TokenStream2;
+use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::quote;
-use syn::{parse_macro_input, Data, DeriveInput, Fields, Meta, NestedMeta, Type};
-
-type Result<T> = std::result::Result<T, &'static str>;
+use syn::{parse_macro_input, Data, DeriveInput, Error, Fields, Meta, NestedMeta, Result, Type};
 
 #[proc_macro_derive(RefCast)]
 pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    let expanded = expand(input).unwrap_or_else(|error| quote! {
-        compile_error! { #error }
-    });
-    TokenStream::from(expanded)
+    expand(input)
+        .unwrap_or_else(|err| err.to_compile_error())
+        .into()
 }
 
 fn expand(input: DeriveInput) -> Result<TokenStream2> {
     if !has_repr_c(&input) {
-        return Err("RefCast trait requires #[repr(C)] or #[repr(transparent)]");
+        return Err(Error::new(
+            Span::call_site(),
+            "RefCast trait requires #[repr(C)] or #[repr(transparent)]",
+        ));
     }
 
     let name = &input.ident;
@@ -89,21 +89,33 @@ fn only_field_ty(input: &DeriveInput) -> Result<&Type> {
             Fields::Named(fields) => &fields.named,
             Fields::Unnamed(fields) => &fields.unnamed,
             Fields::Unit => {
-                return Err("RefCast does not support unit structs");
+                return Err(Error::new(
+                    Span::call_site(),
+                    "RefCast does not support unit structs",
+                ));
             }
         },
         Data::Enum(_) => {
-            return Err("RefCast does not support enums");
+            return Err(Error::new(
+                Span::call_site(),
+                "RefCast does not support enums",
+            ));
         }
         Data::Union(_) => {
-            return Err("RefCast does not support unions");
+            return Err(Error::new(
+                Span::call_site(),
+                "RefCast does not support unions",
+            ));
         }
     };
 
     // TODO: support structs that have trivial other fields like `()` or
     // `PhantomData`.
     if fields.len() != 1 {
-        return Err("RefCast requires a struct with a single field");
+        return Err(Error::new(
+            Span::call_site(),
+            "RefCast requires a struct with a single field",
+        ));
     }
 
     Ok(&fields[0].ty)

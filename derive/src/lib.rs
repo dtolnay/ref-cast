@@ -45,15 +45,14 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
     };
 
     Ok(quote! {
-        impl #impl_generics ::ref_cast::RefCast for #name #ty_generics #where_clause {
-            type From = #from;
+        impl #impl_generics ::ref_cast::RefCast<#from> for #name #ty_generics #where_clause {
 
             #[inline]
-            fn ref_cast(_from: &Self::From) -> &Self {
-                // TODO: assert that `Self::From` and `Self` have the same size
+            fn ref_cast(_from: &#from) -> &Self {
+                // TODO: assert that `#from` and `Self` have the same size
                 // and alignment.
                 //
-                // Cannot do this because `Self::From` may be a generic type
+                // Cannot do this because `#from` may be a generic type
                 // parameter of `Self` where `transmute` is not allowed:
                 //
                 //     #[allow(unused)]
@@ -63,23 +62,23 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
                 //                 _core::mem::uninitialized()));
                 //     }
                 //
-                // Cannot do this because `Self::From` may not be sized:
+                // Cannot do this because `#from` may not be sized:
                 //
-                //     debug_assert_eq!(_core::mem::size_of::<Self::From>(),
+                //     debug_assert_eq!(_core::mem::size_of::<#from>(),
                 //                      _core::mem::size_of::<Self>());
-                //     debug_assert_eq!(_core::mem::align_of::<Self::From>(),
+                //     debug_assert_eq!(_core::mem::align_of::<#from>(),
                 //                      _core::mem::align_of::<Self>());
 
                 #assert_trivial_fields
                 unsafe {
-                    &*(_from as *const Self::From as *const Self)
+                    &*(_from as *const #from as *const Self)
                 }
             }
 
             #[inline]
-            fn ref_cast_mut(_from: &mut Self::From) -> &mut Self {
+            fn ref_cast_mut(_from: &mut #from) -> &mut Self {
                 unsafe {
-                    &mut *(_from as *mut Self::From as *mut Self)
+                    &mut *(_from as *mut #from as *mut Self)
                 }
             }
         }

@@ -155,10 +155,9 @@ pub use ref_cast_impl::RefCast;
 /// ```
 ///
 /// See the crate-level documentation for usage examples!
-pub trait RefCast {
-    type From: ?Sized;
-    fn ref_cast(from: &Self::From) -> &Self;
-    fn ref_cast_mut(from: &mut Self::From) -> &mut Self;
+pub trait RefCast<From: ?Sized> {
+    fn ref_cast(from: &From) -> &Self;
+    fn ref_cast_mut(from: &mut From) -> &mut Self;
 }
 
 // Not public API.

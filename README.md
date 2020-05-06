@@ -1,7 +1,7 @@
 RefCast
 =======
 
-[![Build Status](https://api.travis-ci.org/dtolnay/ref-cast.svg?branch=master)](https://travis-ci.org/dtolnay/ref-cast)
+[![Build Status](https://img.shields.io/github/workflow/status/dtolnay/ref-cast/CI/master)](https://github.com/dtolnay/ref-cast/actions?query=branch%3Amaster)
 [![Latest Version](https://img.shields.io/crates/v/ref-cast.svg)](https://crates.io/crates/ref-cast)
 [![Rust Documentation](https://img.shields.io/badge/api-rustdoc-blue.svg)](https://docs.rs/ref-cast)
 

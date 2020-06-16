@@ -6,7 +6,7 @@ edition = "2018"
 license = "MIT OR Apache-2.0"
 description = "Derive implementation for ref_cast::RefCast."
 repository = "https://github.com/dtolnay/ref-cast"
-documentation = "https://docs.rs/ref-cast-impl"
+documentation = "https://docs.rs/ref-cast"
 
 [lib]
 proc-macro = true

@@ -9,7 +9,6 @@ repository = "https://github.com/dtolnay/ref-cast"
 documentation = "https://docs.rs/ref-cast-impl"
 
 [lib]
-name = "ref_cast_impl"
 proc-macro = true
 
 [dependencies]

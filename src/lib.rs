@@ -136,7 +136,7 @@
 //! }
 //! ```
 
-#![doc(html_root_url = "https://docs.rs/ref-cast/1.0.1")]
+#![doc(html_root_url = "https://docs.rs/ref-cast/1.0.2")]
 #![no_std]
 
 mod trivial;

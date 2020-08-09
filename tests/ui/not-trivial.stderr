@@ -4,7 +4,7 @@ error[E0277]: the trait bound `std::string::String: ref_cast::trivial::Trivial` 
 8 |     two: String,
   |          ^^^^^^ the trait `ref_cast::trivial::Trivial` is not implemented for `std::string::String`
   |
- ::: $WORKSPACE/src/trivial.rs:8:26
+ ::: $WORKSPACE/src/trivial.rs
   |
-8 | pub fn assert_trivial<T: Trivial>() {}
+  | pub fn assert_trivial<T: Trivial>() {}
   |                          ------- required by this bound in `ref_cast::private::assert_trivial`

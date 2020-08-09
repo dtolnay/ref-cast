@@ -14,7 +14,7 @@ ref-cast-impl = { version = "=1.0.2", path = "derive" }
 
 [dev-dependencies]
 rustversion = "1.0"
-trybuild = { version = "1.0.19", features = ["diff"] }
+trybuild = { version = "1.0.32", features = ["diff"] }
 
 [workspace]
 members = ["derive"]

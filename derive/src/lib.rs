@@ -160,7 +160,9 @@ fn trivial_fields(fields: &Fields) -> Result<Vec<&Type>> {
     Ok(trivial)
 }
 
-fn decide_trivial(fields: &Fields) -> Result<fn(&Field) -> Result<bool>> {
+// FIXME: https://github.com/rust-lang/rust/issues/78507
+type Workaround = fn(&Field) -> Result<bool>;
+fn decide_trivial(fields: &Fields) -> Result<Workaround> {
     for field in fields {
         if is_explicit_trivial(field)? {
             return Ok(is_explicit_trivial);

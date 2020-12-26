@@ -1,12 +1,12 @@
 extern crate proc_macro;
 
 use proc_macro::TokenStream;
-use proc_macro2::{Span, TokenStream as TokenStream2};
+use proc_macro2::{Span, TokenStream as TokenStream2, TokenTree};
 use quote::quote;
-use syn::parse::Nothing;
+use syn::parse::{Nothing, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::{
-    parse_macro_input, Data, DeriveInput, Error, Field, Meta, NestedMeta, Result, Token, Type,
+    parse_macro_input, token, Data, DeriveInput, Error, Expr, Field, Path, Result, Token, Type,
 };
 
 #[proc_macro_derive(RefCast, attributes(trivial))]
@@ -18,12 +18,7 @@ pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
 }
 
 fn expand(input: DeriveInput) -> Result<TokenStream2> {
-    if !has_repr_c(&input) {
-        return Err(Error::new(
-            Span::call_site(),
-            "RefCast trait requires #[repr(C)] or #[repr(transparent)]",
-        ));
-    }
+    check_attrs(&input)?;
 
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
@@ -86,19 +81,77 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
     })
 }
 
-fn has_repr_c(input: &DeriveInput) -> bool {
+fn check_attrs(input: &DeriveInput) -> Result<()> {
+    let mut has_repr = false;
+    let mut errors = None;
+    let mut push_error = |error| match &mut errors {
+        Some(errors) => Error::combine(errors, error),
+        None => errors = Some(error),
+    };
+
     for attr in &input.attrs {
-        if let Ok(Meta::List(meta)) = attr.parse_meta() {
-            if meta.path.is_ident("repr") && meta.nested.len() == 1 {
-                if let NestedMeta::Meta(Meta::Path(path)) = &meta.nested[0] {
+        if attr.path.is_ident("repr") {
+            if let Err(error) = attr.parse_args_with(|input: ParseStream| {
+                while !input.is_empty() {
+                    let path = input.call(Path::parse_mod_style)?;
+                    let meta_item_span = || -> Result<_> {
+                        if input.peek(token::Paren) {
+                            let group: TokenTree = input.parse()?;
+                            Ok(quote!(#path #group))
+                        } else if input.peek(Token![=]) {
+                            let eq_token: Token![=] = input.parse()?;
+                            let value: Expr = input.parse()?;
+                            Ok(quote!(#path #eq_token #value))
+                        } else {
+                            Ok(quote!(#path))
+                        }
+                    };
                     if path.is_ident("C") || path.is_ident("transparent") {
-                        return true;
+                        has_repr = true;
+                    } else if path.is_ident("packed") {
+                        // ignore
+                    } else if path.is_ident("align") {
+                        push_error(Error::new_spanned(
+                            meta_item_span()?,
+                            "aligned repr on struct that implements RefCast is not supported",
+                        ));
+                    } else {
+                        push_error(Error::new_spanned(
+                            meta_item_span()?,
+                            "unrecognized repr on struct that implements RefCast",
+                        ));
+                    }
+                    if !input.is_empty() {
+                        input.parse::<Token![,]>()?;
                     }
                 }
+                Ok(())
+            }) {
+                push_error(error);
             }
+        } else if !attr.path.is_ident("doc") {
+            push_error(Error::new_spanned(
+                attr,
+                "unrecognized attribute on struct that implements RefCast",
+            ));
         }
     }
-    false
+
+    if !has_repr {
+        let mut requires_repr = Error::new(
+            Span::call_site(),
+            "RefCast trait requires #[repr(C)] or #[repr(transparent)]",
+        );
+        if let Some(errors) = errors {
+            requires_repr.combine(errors);
+        }
+        errors = Some(requires_repr);
+    }
+
+    match errors {
+        None => Ok(()),
+        Some(errors) => Err(errors),
+    }
 }
 
 type Fields = Punctuated<Field, Token![,]>;

@@ -94,32 +94,27 @@ fn check_attrs(input: &DeriveInput) -> Result<()> {
             if let Err(error) = attr.parse_args_with(|input: ParseStream| {
                 while !input.is_empty() {
                     let path = input.call(Path::parse_mod_style)?;
-                    let meta_item_span = || -> Result<_> {
-                        if input.peek(token::Paren) {
-                            let group: TokenTree = input.parse()?;
-                            Ok(quote!(#path #group))
-                        } else if input.peek(Token![=]) {
-                            let eq_token: Token![=] = input.parse()?;
-                            let value: Expr = input.parse()?;
-                            Ok(quote!(#path #eq_token #value))
-                        } else {
-                            Ok(quote!(#path))
-                        }
-                    };
                     if path.is_ident("C") || path.is_ident("transparent") {
                         has_repr = true;
                     } else if path.is_ident("packed") {
                         // ignore
-                    } else if path.is_ident("align") {
-                        push_error(Error::new_spanned(
-                            meta_item_span()?,
-                            "aligned repr on struct that implements RefCast is not supported",
-                        ));
                     } else {
-                        push_error(Error::new_spanned(
-                            meta_item_span()?,
-                            "unrecognized repr on struct that implements RefCast",
-                        ));
+                        let meta_item_span = if input.peek(token::Paren) {
+                            let group: TokenTree = input.parse()?;
+                            quote!(#path #group)
+                        } else if input.peek(Token![=]) {
+                            let eq_token: Token![=] = input.parse()?;
+                            let value: Expr = input.parse()?;
+                            quote!(#path #eq_token #value)
+                        } else {
+                            quote!(#path)
+                        };
+                        let msg = if path.is_ident("align") {
+                            "aligned repr on struct that implements RefCast is not supported"
+                        } else {
+                            "unrecognized repr on struct that implements RefCast"
+                        };
+                        push_error(Error::new_spanned(meta_item_span, msg));
                     }
                     if !input.is_empty() {
                         input.parse::<Token![,]>()?;

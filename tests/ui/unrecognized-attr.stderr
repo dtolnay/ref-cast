@@ -1,0 +1,11 @@
+error: unrecognized attribute on struct that implements RefCast
+ --> $DIR/unrecognized-attr.rs:5:1
+  |
+5 | #[unrecognized]
+  | ^^^^^^^^^^^^^^^
+
+error: cannot find attribute `unrecognized` in this scope
+ --> $DIR/unrecognized-attr.rs:5:3
+  |
+5 | #[unrecognized]
+  |   ^^^^^^^^^^^^

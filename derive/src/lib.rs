@@ -13,7 +13,7 @@ use syn::{
 pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     expand(input)
-        .unwrap_or_else(|err| err.to_compile_error())
+        .unwrap_or_else(Error::into_compile_error)
         .into()
 }
 

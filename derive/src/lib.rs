@@ -18,7 +18,7 @@ pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
 }
 
 fn expand(input: DeriveInput) -> Result<TokenStream2> {
-    check_attrs(&input)?;
+    check_repr(&input)?;
 
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
@@ -81,7 +81,7 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
     })
 }
 
-fn check_attrs(input: &DeriveInput) -> Result<()> {
+fn check_repr(input: &DeriveInput) -> Result<()> {
     let mut has_repr = false;
     let mut errors = None;
     let mut push_error = |error| match &mut errors {
@@ -124,11 +124,6 @@ fn check_attrs(input: &DeriveInput) -> Result<()> {
             }) {
                 push_error(error);
             }
-        } else if !attr.path.is_ident("doc") {
-            push_error(Error::new_spanned(
-                attr,
-                "unrecognized attribute on struct that implements RefCast",
-            ));
         }
     }
 

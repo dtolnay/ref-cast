@@ -217,6 +217,7 @@ fn decide_trivial(fields: &Fields) -> Result<fn(&Field) -> Result<bool>> {
     Ok(is_implicit_trivial)
 }
 
+#[allow(clippy::unnecessary_wraps)] // match signature of is_explicit_trivial
 fn is_implicit_trivial(field: &Field) -> Result<bool> {
     match &field.ty {
         Type::Tuple(ty) => Ok(ty.elems.is_empty()),

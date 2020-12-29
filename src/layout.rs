@@ -23,15 +23,35 @@ pub fn assert_layout<Outer: ?Sized, Inner: ?Sized>(
     inner_align: usize,
 ) {
     if outer_size != inner_size {
+        #[cfg(no_intrinsic_type_name)]
         panic!(
             "unexpected size in cast to {}: {} != {}",
             name, outer_size, inner_size,
         );
+        #[cfg(not(no_intrinsic_type_name))]
+        panic!(
+            "unexpected size in cast from {} to {}: {} != {}",
+            core::any::type_name::<Inner>(),
+            core::any::type_name::<Outer>(),
+            inner_size,
+            outer_size,
+        );
     }
     if outer_align != inner_align {
+        #[cfg(no_intrinsic_type_name)]
         panic!(
             "unexpected alignment in cast to {}: {} != {}",
             name, outer_align, inner_align,
         );
+        #[cfg(not(no_intrinsic_type_name))]
+        panic!(
+            "unexpected alignment in cast from {} to {}: {} != {}",
+            core::any::type_name::<Inner>(),
+            core::any::type_name::<Outer>(),
+            inner_align,
+            outer_align,
+        );
     }
+    #[cfg(not(no_intrinsic_type_name))]
+    let _ = name;
 }

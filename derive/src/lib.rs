@@ -21,6 +21,7 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
     check_repr(&input)?;
 
     let name = &input.ident;
+    let name_str = name.to_string();
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
 
     let fields = fields(&input)?;
@@ -51,6 +52,7 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
                     #[allow(unused_imports)]
                     use ::ref_cast::private::LayoutUnsized;
                     ::ref_cast::private::assert_layout::<Self, Self::From>(
+                        #name_str,
                         ::ref_cast::private::Layout::<Self>::SIZE,
                         ::ref_cast::private::Layout::<Self::From>::SIZE,
                         ::ref_cast::private::Layout::<Self>::ALIGN,

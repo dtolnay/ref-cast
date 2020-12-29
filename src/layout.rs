@@ -16,18 +16,22 @@ impl<T> Layout<T> {
 
 #[inline]
 pub fn assert_layout<Outer: ?Sized, Inner: ?Sized>(
+    name: &'static str,
     outer_size: usize,
     inner_size: usize,
     outer_align: usize,
     inner_align: usize,
 ) {
     if outer_size != inner_size {
-        panic!("unexpected size in cast: {} != {}", outer_size, inner_size);
+        panic!(
+            "unexpected size in cast to {}: {} != {}",
+            name, outer_size, inner_size,
+        );
     }
     if outer_align != inner_align {
         panic!(
-            "unexpected alignment in cast: {} != {}",
-            outer_align, inner_align,
+            "unexpected alignment in cast to {}: {} != {}",
+            name, outer_align, inner_align,
         );
     }
 }

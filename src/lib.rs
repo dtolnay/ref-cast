@@ -139,6 +139,7 @@
 #![doc(html_root_url = "https://docs.rs/ref-cast/1.0.5")]
 #![no_std]
 
+mod layout;
 mod trivial;
 
 pub use ref_cast_impl::RefCast;
@@ -172,5 +173,6 @@ pub trait RefCast {
 // Not public API.
 #[doc(hidden)]
 pub mod private {
+    pub use crate::layout::{assert_layout, Layout, LayoutUnsized};
     pub use crate::trivial::assert_trivial;
 }

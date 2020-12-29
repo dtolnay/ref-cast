@@ -45,27 +45,18 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
 
             #[inline]
             fn ref_cast(_from: &Self::From) -> &Self {
-                // TODO: assert that `Self::From` and `Self` have the same size
-                // and alignment.
-                //
-                // Cannot do this because `Self::From` may be a generic type
-                // parameter of `Self` where `transmute` is not allowed:
-                //
-                //     #[allow(unused)]
-                //     unsafe fn assert_same_size #impl_generics #where_clause () {
-                //         _core::mem::forget(
-                //             _core::mem::transmute::<#from, #name #ty_generics>(
-                //                 _core::mem::uninitialized()));
-                //     }
-                //
-                // Cannot do this because `Self::From` may not be sized:
-                //
-                //     debug_assert_eq!(_core::mem::size_of::<Self::From>(),
-                //                      _core::mem::size_of::<Self>());
-                //     debug_assert_eq!(_core::mem::align_of::<Self::From>(),
-                //                      _core::mem::align_of::<Self>());
-
                 #assert_trivial_fields
+                #[cfg(debug_assertions)]
+                {
+                    #[allow(unused_imports)]
+                    use ::ref_cast::private::LayoutUnsized;
+                    ::ref_cast::private::assert_layout::<Self, Self::From>(
+                        ::ref_cast::private::Layout::<Self>::SIZE,
+                        ::ref_cast::private::Layout::<Self::From>::SIZE,
+                        ::ref_cast::private::Layout::<Self>::ALIGN,
+                        ::ref_cast::private::Layout::<Self::From>::ALIGN,
+                    );
+                }
                 unsafe {
                     &*(_from as *const Self::From as *const Self)
                 }

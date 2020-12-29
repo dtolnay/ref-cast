@@ -66,6 +66,18 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
 
             #[inline]
             fn ref_cast_mut(_from: &mut Self::From) -> &mut Self {
+                #[cfg(debug_assertions)]
+                {
+                    #[allow(unused_imports)]
+                    use ::ref_cast::private::LayoutUnsized;
+                    ::ref_cast::private::assert_layout::<Self, Self::From>(
+                        #name_str,
+                        ::ref_cast::private::Layout::<Self>::SIZE,
+                        ::ref_cast::private::Layout::<Self::From>::SIZE,
+                        ::ref_cast::private::Layout::<Self>::ALIGN,
+                        ::ref_cast::private::Layout::<Self::From>::ALIGN,
+                    );
+                }
                 unsafe {
                     &mut *(_from as *mut Self::From as *mut Self)
                 }

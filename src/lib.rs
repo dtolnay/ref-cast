@@ -136,7 +136,7 @@
 //! }
 //! ```
 
-#![doc(html_root_url = "https://docs.rs/ref-cast/1.0.5")]
+#![doc(html_root_url = "https://docs.rs/ref-cast/1.0.6")]
 #![no_std]
 
 mod layout;

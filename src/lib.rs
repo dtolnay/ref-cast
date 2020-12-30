@@ -138,6 +138,7 @@
 
 #![doc(html_root_url = "https://docs.rs/ref-cast/1.0.6")]
 #![no_std]
+#![allow(clippy::module_name_repetitions)]
 
 mod layout;
 mod trivial;

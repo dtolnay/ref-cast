@@ -1,3 +1,5 @@
+#![allow(clippy::needless_pass_by_value, clippy::if_not_else)]
+
 extern crate proc_macro;
 
 use proc_macro::TokenStream;

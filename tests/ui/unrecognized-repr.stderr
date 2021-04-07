@@ -16,18 +16,6 @@ error: unrecognized repr on struct that implements RefCast
 4 | #[repr(packed, C, usize, usize(0), usize = "0")]
   |                                    ^^^^^^^^^^^
 
-error[E0552]: unrecognized representation hint
- --> $DIR/unrecognized-repr.rs:4:26
-  |
-4 | #[repr(packed, C, usize, usize(0), usize = "0")]
-  |                          ^^^^^^^^
-
-error[E0552]: unrecognized representation hint
- --> $DIR/unrecognized-repr.rs:4:36
-  |
-4 | #[repr(packed, C, usize, usize(0), usize = "0")]
-  |                                    ^^^^^^^^^^^
-
 error[E0517]: attribute should be applied to an enum
  --> $DIR/unrecognized-repr.rs:4:19
   |

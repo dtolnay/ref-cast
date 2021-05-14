@@ -4,4 +4,4 @@ error: RefCast trait requires #[repr(C)] or #[repr(transparent)]
 3 | #[derive(RefCast)]
   |          ^^^^^^^
   |
-  = note: this error originates in a derive macro (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the derive macro `RefCast` (in Nightly builds, run with -Z macro-backtrace for more info)

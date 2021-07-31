@@ -11,7 +11,29 @@ use syn::{
     parse_macro_input, token, Data, DeriveInput, Error, Expr, Field, Path, Result, Token, Type,
 };
 
-#[proc_macro_derive(RefCast, attributes(trivial))]
+mod attr;
+mod symbols;
+
+/// # Container attributes
+/// - `#[ref_cast(crate = "...")]`
+///
+///  Specify a path to the `ref_cast` crate instance to use when referring to ref_cast APIs from generated code. This is
+/// normally only applicable when invoking re-exported ref_cast derives from a public macro in a different crate.
+/// ```
+/// pub use ref_cast;
+/// #[macro_export]
+/// macro_rules! my_macro {
+///     () => {
+///         #[derive($crate::ref_cast::RefCast)]
+///         #[ref_cast(crate = "$crate::ref_cast")]
+///         #[repr(transparent)]
+///         struct MyStruct {
+///             my_field: String,
+///         }
+///     }
+/// }
+/// ```
+#[proc_macro_derive(RefCast, attributes(ref_cast, trivial))]
 pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     expand(input)
@@ -21,6 +43,10 @@ pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
 
 fn expand(input: DeriveInput) -> Result<TokenStream2> {
     check_repr(&input)?;
+
+    let attr::Container {
+        crate_ref_cast_path,
+    } = attr::Container::from_ast(&input)?;
 
     let name = &input.ident;
     let name_str = name.to_string();
@@ -34,7 +60,7 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
         Some(quote! {
             if false {
                 #(
-                    ::ref_cast::private::assert_trivial::<#trivial>();
+                    #crate_ref_cast_path::private::assert_trivial::<#trivial>();
                 )*
             }
         })
@@ -43,7 +69,7 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
     };
 
     Ok(quote! {
-        impl #impl_generics ::ref_cast::RefCast for #name #ty_generics #where_clause {
+        impl #impl_generics #crate_ref_cast_path::RefCast for #name #ty_generics #where_clause {
             type From = #from;
 
             #[inline]
@@ -52,13 +78,13 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
                 #[cfg(debug_assertions)]
                 {
                     #[allow(unused_imports)]
-                    use ::ref_cast::private::LayoutUnsized;
-                    ::ref_cast::private::assert_layout::<Self, Self::From>(
+                    use #crate_ref_cast_path::private::LayoutUnsized;
+                    #crate_ref_cast_path::private::assert_layout::<Self, Self::From>(
                         #name_str,
-                        ::ref_cast::private::Layout::<Self>::SIZE,
-                        ::ref_cast::private::Layout::<Self::From>::SIZE,
-                        ::ref_cast::private::Layout::<Self>::ALIGN,
-                        ::ref_cast::private::Layout::<Self::From>::ALIGN,
+                        #crate_ref_cast_path::private::Layout::<Self>::SIZE,
+                        #crate_ref_cast_path::private::Layout::<Self::From>::SIZE,
+                        #crate_ref_cast_path::private::Layout::<Self>::ALIGN,
+                        #crate_ref_cast_path::private::Layout::<Self::From>::ALIGN,
                     );
                 }
                 unsafe {
@@ -71,13 +97,13 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
                 #[cfg(debug_assertions)]
                 {
                     #[allow(unused_imports)]
-                    use ::ref_cast::private::LayoutUnsized;
-                    ::ref_cast::private::assert_layout::<Self, Self::From>(
+                    use #crate_ref_cast_path::private::LayoutUnsized;
+                    #crate_ref_cast_path::private::assert_layout::<Self, Self::From>(
                         #name_str,
-                        ::ref_cast::private::Layout::<Self>::SIZE,
-                        ::ref_cast::private::Layout::<Self::From>::SIZE,
-                        ::ref_cast::private::Layout::<Self>::ALIGN,
-                        ::ref_cast::private::Layout::<Self::From>::ALIGN,
+                        #crate_ref_cast_path::private::Layout::<Self>::SIZE,
+                        #crate_ref_cast_path::private::Layout::<Self::From>::SIZE,
+                        #crate_ref_cast_path::private::Layout::<Self>::ALIGN,
+                        #crate_ref_cast_path::private::Layout::<Self::From>::ALIGN,
                     );
                 }
                 unsafe {

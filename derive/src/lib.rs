@@ -25,7 +25,7 @@ mod symbols;
 /// macro_rules! my_macro {
 ///     () => {
 ///         #[derive($crate::ref_cast::RefCast)]
-///         #[ref_cast(crate = "$crate::ref_cast")]
+///         #[ref_cast(crate = "my_crate::ref_cast")]
 ///         #[repr(transparent)]
 ///         struct MyStruct {
 ///             my_field: String,

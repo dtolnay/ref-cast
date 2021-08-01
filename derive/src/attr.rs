@@ -73,16 +73,14 @@ fn parse_meta_items(attr: &syn::Attribute) -> crate::Result<Vec<syn::NestedMeta>
 
     match attr.parse_meta()? {
         List(meta) => Ok(meta.nested.into_iter().collect()),
-        other => {
-            return Err(Error::new_spanned(
-                other.into_token_stream(),
-                "expected #[ref_cast(...)]",
-            ))
-        }
+        other => Err(Error::new_spanned(
+            other.into_token_stream(),
+            "expected #[ref_cast(...)]",
+        )),
     }
 }
 
-fn get_lit_str<'a>(attr_name: Symbol, lit: &'a syn::Lit) -> crate::Result<&'a syn::LitStr> {
+fn get_lit_str(attr_name: Symbol, lit: &syn::Lit) -> crate::Result<&syn::LitStr> {
     use syn::Lit;
     match lit {
         Lit::Str(lit) => Ok(lit),

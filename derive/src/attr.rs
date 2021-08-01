@@ -11,7 +11,7 @@ use {
     },
 };
 
-use crate::symbols::*;
+use crate::symbols::{Symbol, CRATE, REF_CAST};
 
 /// Represents container attribute information.
 pub struct Container {
@@ -32,7 +32,7 @@ impl Container {
             match &meta_item {
                 // Parse `#[ref_cast(crate = "foo")]`
                 NestedMeta::Meta(NameValue(m)) if m.path == CRATE => {
-                    crate_ref_cast_path = Some(parse_lit_into_path(CRATE, &m.lit)?)
+                    crate_ref_cast_path = Some(parse_lit_into_path(CRATE, &m.lit)?);
                 }
                 NestedMeta::Meta(meta_item) => {
                     let path = meta_item
@@ -61,10 +61,10 @@ impl Container {
     }
 }
 
-/// Parses element of ref_cast attributes list for example `crate = "ref_cast_alias"` in
+/// Parses element of `ref_cast` attributes list for example `crate = "ref_cast_alias"` in
 /// `#[ref_cast(crate = "ref_cast_alias")]`
 ///
-/// See [syn::NestedMeta](/syn/enum.NestedMeta.html) for more info.
+/// See [`syn::NestedMeta`](/syn/enum.NestedMeta.html) for more info.
 fn parse_meta_items(attr: &syn::Attribute) -> crate::Result<Vec<syn::NestedMeta>> {
     use syn::Meta::List;
     if attr.path != REF_CAST {

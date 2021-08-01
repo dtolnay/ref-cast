@@ -17,8 +17,8 @@ mod symbols;
 /// # Container attributes
 /// - `#[ref_cast(crate = "...")]`
 ///
-///  Specify a path to the `ref_cast` crate instance to use when referring to ref_cast APIs from generated code. This is
-/// normally only applicable when invoking re-exported ref_cast derives from a public macro in a different crate.
+///  Specify a path to the `ref_cast` crate instance to use when referring to `ref_cast` APIs from generated code. This
+/// is normally only applicable when invoking re-exported `ref_cast` derives from a public macro in a different crate.
 /// ```
 /// pub use ref_cast;
 /// #[macro_export]

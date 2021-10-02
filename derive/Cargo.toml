@@ -3,6 +3,7 @@ name = "ref-cast-impl"
 version = "1.0.6"
 authors = ["David Tolnay <dtolnay@gmail.com>"]
 edition = "2018"
+rust-version = "1.31"
 license = "MIT OR Apache-2.0"
 description = "Derive implementation for ref_cast::RefCast."
 repository = "https://github.com/dtolnay/ref-cast"

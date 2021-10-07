@@ -1,5 +1,5 @@
 error: RefCast trait requires #[repr(C)] or #[repr(transparent)]
- --> $DIR/no-repr.rs:3:10
+ --> $DIR/tests/ui/no-repr.rs:3:10
   |
 3 | #[derive(RefCast)]
   |          ^^^^^^^

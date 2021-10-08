@@ -1,35 +1,35 @@
 error: unrecognized repr on struct that implements RefCast
- --> $DIR/tests/ui/unrecognized-repr.rs:4:19
+ --> tests/ui/unrecognized-repr.rs:4:19
   |
 4 | #[repr(packed, C, usize, usize(0), usize = "0")]
   |                   ^^^^^
 
 error: unrecognized repr on struct that implements RefCast
- --> $DIR/tests/ui/unrecognized-repr.rs:4:26
+ --> tests/ui/unrecognized-repr.rs:4:26
   |
 4 | #[repr(packed, C, usize, usize(0), usize = "0")]
   |                          ^^^^^^^^
 
 error: unrecognized repr on struct that implements RefCast
- --> $DIR/tests/ui/unrecognized-repr.rs:4:36
+ --> tests/ui/unrecognized-repr.rs:4:36
   |
 4 | #[repr(packed, C, usize, usize(0), usize = "0")]
   |                                    ^^^^^^^^^^^
 
 error[E0552]: invalid representation hint: `usize` does not take a parenthesized argument list
- --> $DIR/tests/ui/unrecognized-repr.rs:4:26
+ --> tests/ui/unrecognized-repr.rs:4:26
   |
 4 | #[repr(packed, C, usize, usize(0), usize = "0")]
   |                          ^^^^^^^^
 
 error[E0552]: invalid representation hint: `usize` does not take a value
- --> $DIR/tests/ui/unrecognized-repr.rs:4:36
+ --> tests/ui/unrecognized-repr.rs:4:36
   |
 4 | #[repr(packed, C, usize, usize(0), usize = "0")]
   |                                    ^^^^^^^^^^^
 
 error[E0517]: attribute should be applied to an enum
- --> $DIR/tests/ui/unrecognized-repr.rs:4:19
+ --> tests/ui/unrecognized-repr.rs:4:19
   |
 4 |   #[repr(packed, C, usize, usize(0), usize = "0")]
   |                     ^^^^^
@@ -39,7 +39,7 @@ error[E0517]: attribute should be applied to an enum
   | |_- not an enum
 
 error[E0517]: attribute should be applied to an enum
- --> $DIR/tests/ui/unrecognized-repr.rs:4:26
+ --> tests/ui/unrecognized-repr.rs:4:26
   |
 4 |   #[repr(packed, C, usize, usize(0), usize = "0")]
   |                            ^^^^^^^^
@@ -49,7 +49,7 @@ error[E0517]: attribute should be applied to an enum
   | |_- not an enum
 
 error[E0517]: attribute should be applied to an enum
- --> $DIR/tests/ui/unrecognized-repr.rs:4:36
+ --> tests/ui/unrecognized-repr.rs:4:36
   |
 4 |   #[repr(packed, C, usize, usize(0), usize = "0")]
   |                                      ^^^^^^^^^^^
@@ -59,7 +59,7 @@ error[E0517]: attribute should be applied to an enum
   | |_- not an enum
 
 error[E0566]: conflicting representation hints
- --> $DIR/tests/ui/unrecognized-repr.rs:4:8
+ --> tests/ui/unrecognized-repr.rs:4:8
   |
 4 | #[repr(packed, C, usize, usize(0), usize = "0")]
   |        ^^^^^^  ^  ^^^^^  ^^^^^^^^  ^^^^^^^^^^^

@@ -138,7 +138,11 @@
 
 #![doc(html_root_url = "https://docs.rs/ref-cast/1.0.6")]
 #![no_std]
-#![allow(clippy::missing_panics_doc, clippy::module_name_repetitions)]
+#![allow(
+    clippy::manual_assert,
+    clippy::missing_panics_doc,
+    clippy::module_name_repetitions
+)]
 
 mod layout;
 mod trivial;

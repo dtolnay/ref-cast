@@ -1,6 +1,6 @@
 [package]
 name = "ref-cast"
-version = "1.0.6" # remember to update html_root_url
+version = "1.0.7" # remember to update html_root_url
 authors = ["David Tolnay <dtolnay@gmail.com>"]
 edition = "2018"
 rust-version = "1.31"
@@ -11,7 +11,7 @@ documentation = "https://docs.rs/ref-cast"
 readme = "README.md"
 
 [dependencies]
-ref-cast-impl = { version = "=1.0.6", path = "derive" }
+ref-cast-impl = { version = "=1.0.7", path = "derive" }
 
 [dev-dependencies]
 rustversion = "1.0"

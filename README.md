@@ -31,9 +31,8 @@ fn main() {
 }
 ```
 
-Note that either of `#[repr(C)]` or `#[repr(transparent)]` is required in order
-for the conversion to be sound. The derive macro will refuse to compile if
-neither is present.
+Note that `#[repr(transparent)]` is required in order for the conversion to be
+sound. The derive macro will refuse to compile if that is not present.
 
 ## Realistic example
 

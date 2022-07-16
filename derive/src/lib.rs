@@ -101,7 +101,7 @@ fn check_repr(input: &DeriveInput) -> Result<()> {
             if let Err(error) = attr.parse_args_with(|input: ParseStream| {
                 while !input.is_empty() {
                     let path = input.call(Path::parse_mod_style)?;
-                    if path.is_ident("C") || path.is_ident("transparent") {
+                    if path.is_ident("transparent") || path.is_ident("C") {
                         has_repr = true;
                     } else if path.is_ident("packed") {
                         // ignore
@@ -137,7 +137,7 @@ fn check_repr(input: &DeriveInput) -> Result<()> {
     if !has_repr {
         let mut requires_repr = Error::new(
             Span::call_site(),
-            "RefCast trait requires #[repr(C)] or #[repr(transparent)]",
+            "RefCast trait requires #[repr(transparent)]",
         );
         if let Some(errors) = errors {
             requires_repr.combine(errors);

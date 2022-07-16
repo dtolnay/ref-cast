@@ -1,4 +1,4 @@
-error: RefCast trait requires #[repr(C)] or #[repr(transparent)]
+error: RefCast trait requires #[repr(transparent)]
  --> tests/ui/no-repr.rs:3:10
   |
 3 | #[derive(RefCast)]

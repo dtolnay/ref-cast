@@ -2,12 +2,12 @@
 name = "ref-cast-impl"
 version = "1.0.8"
 authors = ["David Tolnay <dtolnay@gmail.com>"]
-edition = "2018"
-rust-version = "1.31"
-license = "MIT OR Apache-2.0"
 description = "Derive implementation for ref_cast::RefCast."
-repository = "https://github.com/dtolnay/ref-cast"
 documentation = "https://docs.rs/ref-cast"
+edition = "2018"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/dtolnay/ref-cast"
+rust-version = "1.31"
 
 [lib]
 proc-macro = true

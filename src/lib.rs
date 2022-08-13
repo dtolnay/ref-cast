@@ -176,7 +176,7 @@ pub trait RefCast {
 
 // Not public API.
 #[doc(hidden)]
-pub mod private {
+pub mod __private {
     pub use crate::layout::{assert_layout, Layout, LayoutUnsized};
     pub use crate::trivial::assert_trivial;
 }

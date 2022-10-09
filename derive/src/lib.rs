@@ -9,6 +9,7 @@ use syn::parse::{Nothing, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::{
     parse_macro_input, token, Data, DeriveInput, Error, Expr, Field, Path, Result, Token, Type,
+    Visibility,
 };
 
 #[proc_macro_derive(RefCast, attributes(trivial))]
@@ -29,6 +30,7 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
     let fields = fields(&input)?;
     let from = only_field_ty(fields)?;
     let trivial = trivial_fields(fields)?;
+    let vis = compute_visibility(fields)?;
 
     let assert_trivial_fields = if !trivial.is_empty() {
         Some(quote! {
@@ -46,7 +48,7 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
         impl #impl_generics #name #ty_generics #where_clause {
 
             #[inline]
-            pub fn ref_cast(_from: &#from) -> &Self {
+            #vis fn ref_cast(_from: &#from) -> &Self {
                 #assert_trivial_fields
                 #[cfg(debug_assertions)]
                 {
@@ -66,7 +68,7 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
             }
 
             #[inline]
-            pub fn ref_cast_mut(_from: &mut #from) -> &mut Self {
+            #vis fn ref_cast_mut(_from: &mut #from) -> &mut Self {
                 #[cfg(debug_assertions)]
                 {
                     #[allow(unused_imports)]
@@ -235,4 +237,22 @@ fn is_explicit_trivial(field: &Field) -> Result<bool> {
         }
     }
     Ok(false)
+}
+
+fn compute_visibility(fields: &Fields) -> Result<Visibility> {
+    let mut vis = None;
+    for field in fields {
+        vis = match vis {
+            Some(vis) => match (vis, &field.vis) {
+                (Visibility::Public(_), Visibility::Crate(_)) => Some(field.vis.clone()),
+                (Visibility::Public(_), Visibility::Restricted(_)) => Some(field.vis.clone()),
+                (Visibility::Crate(_), Visibility::Restricted(_)) => Some(field.vis.clone()),
+                (Visibility::Public(_), Visibility::Inherited) => Some(field.vis.clone()),
+                (Visibility::Crate(_), Visibility::Inherited) => Some(field.vis.clone()),
+                (vis, _) => Some(vis),
+            },
+            None => Some(field.vis.clone()),
+        }
+    }
+    vis.ok_or_else(|| Error::new(Span::call_site(), "RefCast requires a nonempty struct"))
 }

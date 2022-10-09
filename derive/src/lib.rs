@@ -249,6 +249,7 @@ fn compute_visibility(fields: &Fields) -> Result<Visibility> {
                 (Visibility::Crate(_), Visibility::Restricted(_)) => Some(field.vis.clone()),
                 (Visibility::Public(_), Visibility::Inherited) => Some(field.vis.clone()),
                 (Visibility::Crate(_), Visibility::Inherited) => Some(field.vis.clone()),
+                (Visibility::Restricted(_), Visibility::Inherited) => Some(field.vis.clone()),
                 (vis, _) => Some(vis),
             },
             None => Some(field.vis.clone()),

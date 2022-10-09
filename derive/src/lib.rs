@@ -43,10 +43,10 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
     };
 
     Ok(quote! {
-        impl #impl_generics ::ref_cast::RefCast<#from> for #name #ty_generics #where_clause {
+        impl #impl_generics #name #ty_generics #where_clause {
 
             #[inline]
-            fn ref_cast(_from: &#from) -> &Self {
+            pub fn ref_cast(_from: &#from) -> &Self {
                 #assert_trivial_fields
                 #[cfg(debug_assertions)]
                 {
@@ -66,7 +66,7 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
             }
 
             #[inline]
-            fn ref_cast_mut(_from: &mut #from) -> &mut Self {
+            pub fn ref_cast_mut(_from: &mut #from) -> &mut Self {
                 #[cfg(debug_assertions)]
                 {
                     #[allow(unused_imports)]

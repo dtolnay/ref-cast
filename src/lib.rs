@@ -148,31 +148,6 @@ mod trivial;
 
 pub use ref_cast_impl::RefCast;
 
-/// Safely cast `&T` to `&U` where the struct `U` contains a single field of
-/// type `T`.
-///
-/// ```
-/// # use ref_cast::RefCast;
-/// #
-/// // `&String` can be cast to `&U`.
-/// #[derive(RefCast)]
-/// #[repr(transparent)]
-/// struct U(String);
-///
-/// // `&T` can be cast to `&V<T>`.
-/// #[derive(RefCast)]
-/// #[repr(transparent)]
-/// struct V<T> {
-///     t: T,
-/// }
-/// ```
-///
-/// See the crate-level documentation for usage examples!
-pub trait RefCast<From: ?Sized> {
-    fn ref_cast(from: &From) -> &Self;
-    fn ref_cast_mut(from: &mut From) -> &mut Self;
-}
-
 // Not public API.
 #[doc(hidden)]
 pub mod __private {

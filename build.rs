@@ -3,10 +3,13 @@ use std::process::Command;
 use std::str;
 
 fn main() {
-    if let Some(rustc) = rustc_minor_version() {
-        if rustc < 38 {
-            println!("cargo:rustc-cfg=no_intrinsic_type_name");
-        }
+    let minor = match rustc_minor_version() {
+        Some(minor) => minor,
+        None => return,
+    };
+
+    if minor < 38 {
+        println!("cargo:rustc-cfg=no_intrinsic_type_name");
     }
 }
 

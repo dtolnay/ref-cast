@@ -3,12 +3,13 @@
 extern crate proc_macro;
 
 use proc_macro::TokenStream;
-use proc_macro2::{Span, TokenStream as TokenStream2, TokenTree};
-use quote::quote;
-use syn::parse::{Nothing, ParseStream};
+use proc_macro2::{Ident, Span, TokenStream as TokenStream2, TokenTree};
+use quote::{quote, quote_spanned};
+use syn::parse::{Nothing, ParseStream, Parser};
 use syn::punctuated::Punctuated;
 use syn::{
-    parse_macro_input, token, Data, DeriveInput, Error, Expr, Field, Path, Result, Token, Type,
+    parenthesized, parse_macro_input, token, Abi, Attribute, Data, DeriveInput, Error, Expr, Field,
+    Generics, Path, Result, Token, Type, Visibility,
 };
 
 /// Derive the `RefCast` trait.
@@ -53,12 +54,160 @@ use syn::{
 #[proc_macro_derive(RefCast, attributes(trivial))]
 pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    expand(input)
+    expand_ref_cast(input)
         .unwrap_or_else(Error::into_compile_error)
         .into()
 }
 
-fn expand(input: DeriveInput) -> Result<TokenStream2> {
+/// Derive that makes the `ref_cast_custom` attribute able to generate
+/// freestanding reference casting functions for a type.
+///
+/// Please refer to the documentation of
+/// [`#[ref_cast_custom]`][macro@ref_cast_custom] where these two macros are
+/// documented together.
+#[proc_macro_derive(RefCastCustom, attributes(trivial))]
+pub fn derive_ref_cast_custom(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as DeriveInput);
+    expand_ref_cast_custom(input)
+        .unwrap_or_else(Error::into_compile_error)
+        .into()
+}
+
+/// Create a function for a RefCast-style reference cast. Call site gets control
+/// of the visibility, function name, argument name, `const`ness, unsafety, and
+/// documentation.
+///
+/// The `derive(RefCast)` macro produces a trait impl, which means the function
+/// names are predefined, and public if your type is public, and not callable in
+/// `const` (at least today on stable Rust). As an alternative to that,
+/// `derive(RefCastCustom)` exposes greater flexibility so that instead of a
+/// trait impl, the casting functions can be made associated functions or free
+/// functions, can be named what you want, documented, `const` or `unsafe` if
+/// you want, and have your exact choice of visibility.
+///
+/// ```rust
+/// use ref_cast::{ref_cast_custom, RefCastCustom};
+///
+/// #[derive(RefCastCustom)]  // does not generate any public API by itself
+/// #[repr(transparent)]
+/// pub struct Frame([u8]);
+///
+/// impl Frame {
+///     #[ref_cast_custom]  // requires derive(RefCastCustom) on the return type
+///     pub(crate) const fn new(bytes: &[u8]) -> &Self;
+///
+///     #[ref_cast_custom]
+///     pub(crate) fn new_mut(bytes: &mut [u8]) -> &mut Self;
+/// }
+///
+/// // example use of the const fn
+/// const FRAME: &Frame = Frame::new(b"...");
+/// ```
+///
+/// The above shows associated functions, but you might alternatively want to
+/// generate free functions:
+///
+/// ```rust
+/// # use ref_cast::{ref_cast_custom, RefCastCustom};
+/// #
+/// # #[derive(RefCastCustom)]
+/// # #[repr(transparent)]
+/// # pub struct Frame([u8]);
+/// #
+/// impl Frame {
+///     pub fn new<T: AsRef<[u8]>>(bytes: &T) -> &Self {
+///         #[ref_cast_custom]
+///         fn ref_cast(bytes: &[u8]) -> &Frame;
+///
+///         ref_cast(bytes.as_ref())
+///     }
+/// }
+/// ```
+#[proc_macro_attribute]
+pub fn ref_cast_custom(args: TokenStream, input: TokenStream) -> TokenStream {
+    let input = TokenStream2::from(input);
+    let expanded = match (|input: ParseStream| {
+        let attrs = input.call(Attribute::parse_outer)?;
+        let vis: Visibility = input.parse()?;
+        let constness: Option<Token![const]> = input.parse()?;
+        let asyncness: Option<Token![async]> = input.parse()?;
+        let unsafety: Option<Token![unsafe]> = input.parse()?;
+        let abi: Option<Abi> = input.parse()?;
+        let fn_token: Token![fn] = input.parse()?;
+        let ident: Ident = input.parse()?;
+        let mut generics: Generics = input.parse()?;
+
+        let content;
+        let paren_token = parenthesized!(content in input);
+        let arg: Ident = content.parse()?;
+        let colon_token: Token![:] = content.parse()?;
+        let from_type: Type = content.parse()?;
+        let _trailing_comma: Option<Token![,]> = content.parse()?;
+        if !content.is_empty() {
+            let rest: TokenStream2 = content.parse()?;
+            return Err(Error::new_spanned(
+                rest,
+                "ref_cast_custom function is required to have a single argument",
+            ));
+        }
+
+        let arrow_token: Token![->] = input.parse()?;
+        let to_type: Type = input.parse()?;
+        generics.where_clause = input.parse()?;
+        let semi_token: Token![;] = input.parse()?;
+
+        let _: Nothing = syn::parse::<Nothing>(args)?;
+
+        Ok(Function {
+            attrs,
+            vis,
+            constness,
+            asyncness,
+            unsafety,
+            abi,
+            fn_token,
+            ident,
+            generics,
+            paren_token,
+            arg,
+            colon_token,
+            from_type,
+            arrow_token,
+            to_type,
+            semi_token,
+        })
+    })
+    .parse2(input.clone())
+    {
+        Ok(function) => expand_function_body(function),
+        Err(parse_error) => {
+            let compile_error = parse_error.to_compile_error();
+            quote!(#compile_error #input)
+        }
+    };
+    TokenStream::from(expanded)
+}
+
+struct Function {
+    attrs: Vec<Attribute>,
+    vis: Visibility,
+    constness: Option<Token![const]>,
+    asyncness: Option<Token![async]>,
+    unsafety: Option<Token![unsafe]>,
+    abi: Option<Abi>,
+    fn_token: Token![fn],
+    ident: Ident,
+    generics: Generics,
+    paren_token: token::Paren,
+    arg: Ident,
+    colon_token: Token![:],
+    from_type: Type,
+    arrow_token: Token![->],
+    to_type: Type,
+    semi_token: Token![;],
+}
+
+fn expand_ref_cast(input: DeriveInput) -> Result<TokenStream2> {
     check_repr(&input)?;
 
     let name = &input.ident;
@@ -125,6 +274,75 @@ fn expand(input: DeriveInput) -> Result<TokenStream2> {
             }
         }
     })
+}
+
+fn expand_ref_cast_custom(input: DeriveInput) -> Result<TokenStream2> {
+    check_repr(&input)?;
+
+    let name = &input.ident;
+    let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
+
+    let fields = fields(&input)?;
+    let from = only_field_ty(fields)?;
+    let trivial = trivial_fields(fields)?;
+
+    let assert_trivial_fields = if !trivial.is_empty() {
+        Some(quote! {
+            fn __static_assert() {
+                if false {
+                    #(
+                        ::ref_cast::__private::assert_trivial::<#trivial>();
+                    )*
+                }
+            }
+        })
+    } else {
+        None
+    };
+
+    Ok(quote! {
+        unsafe impl #impl_generics ::ref_cast::__private::RefCastCustom<#from> for #name #ty_generics #where_clause {
+            #assert_trivial_fields
+        }
+    })
+}
+
+fn expand_function_body(function: Function) -> TokenStream2 {
+    let Function {
+        attrs,
+        vis,
+        constness,
+        asyncness,
+        unsafety,
+        abi,
+        fn_token,
+        ident,
+        generics,
+        paren_token,
+        arg,
+        colon_token,
+        from_type,
+        arrow_token,
+        to_type,
+        semi_token,
+    } = function;
+
+    let args = quote_spanned! {paren_token.span=>
+        (#arg #colon_token #from_type)
+    };
+
+    quote_spanned! {semi_token.span=>
+        #(#attrs)*
+        #vis #constness #asyncness #unsafety #abi
+        #fn_token #ident #generics #args #arrow_token #to_type {
+            let _ = || {
+                ::ref_cast::__private::ref_cast_custom::<#from_type, #to_type>(#arg);
+            };
+            unsafe {
+                ::ref_cast::__private::transmute::<#from_type, #to_type>(#arg)
+            }
+        }
+    }
 }
 
 fn check_repr(input: &DeriveInput) -> Result<()> {

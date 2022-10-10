@@ -1,0 +1,23 @@
+error[E0106]: missing lifetime specifier
+ --> tests/ui/impl-trait.rs:9:44
+  |
+9 |     pub fn ref_cast(s: impl AsRef<str>) -> &Self;
+  |                                            ^ expected named lifetime parameter
+  |
+  = help: this function's return type contains a borrowed value, but there is no value for it to be borrowed from
+help: consider using the `'static` lifetime
+  |
+9 |     pub fn ref_cast(s: impl AsRef<str>) -> &'static Self;
+  |                                             +++++++
+
+error[E0562]: `impl Trait` only allowed in function and inherent method return types, not in path
+ --> tests/ui/impl-trait.rs:9:24
+  |
+9 |     pub fn ref_cast(s: impl AsRef<str>) -> &Self;
+  |                        ^^^^^^^^^^^^^^^
+
+error[E0562]: `impl Trait` only allowed in function and inherent method return types, not in path
+  --> tests/ui/impl-trait.rs:12:26
+   |
+12 |     pub fn ref_cast2(s: &impl AsRef<str>) -> &Self;
+   |                          ^^^^^^^^^^^^^^^

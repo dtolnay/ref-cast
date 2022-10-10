@@ -223,7 +223,10 @@ fn decide_trivial(fields: &Fields) -> Result<fn(&Field) -> Result<bool>> {
 fn is_implicit_trivial(field: &Field) -> Result<bool> {
     match &field.ty {
         Type::Tuple(ty) => Ok(ty.elems.is_empty()),
-        Type::Path(ty) => Ok(ty.path.segments.last().unwrap().ident == "PhantomData"),
+        Type::Path(ty) => {
+            let ident = &ty.path.segments.last().unwrap().ident;
+            Ok(ident == "PhantomData" || ident == "PhantomPinned")
+        }
         _ => Ok(false),
     }
 }

@@ -8,6 +8,10 @@ fn main() {
         None => return,
     };
 
+    if minor < 33 {
+        println!("cargo:rustc-cfg=no_phantom_pinned");
+    }
+
     if minor < 38 {
         println!("cargo:rustc-cfg=no_intrinsic_type_name");
     }

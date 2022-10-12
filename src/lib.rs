@@ -180,7 +180,7 @@ pub trait RefCast {
 // Not public API.
 #[doc(hidden)]
 pub mod __private {
-    pub use crate::custom::{ref_cast_custom, RefCastCustom};
+    pub use crate::custom::{ref_cast_custom, CurrentCrate, RefCastCustom};
     pub use crate::layout::{assert_layout, Layout, LayoutUnsized};
     pub use crate::trivial::assert_trivial;
     pub use core::mem::transmute;

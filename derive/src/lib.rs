@@ -279,6 +279,7 @@ fn expand_ref_cast(input: DeriveInput) -> Result<TokenStream2> {
 fn expand_ref_cast_custom(input: DeriveInput) -> Result<TokenStream2> {
     check_repr(&input)?;
 
+    let vis = &input.vis;
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
 
@@ -301,9 +302,15 @@ fn expand_ref_cast_custom(input: DeriveInput) -> Result<TokenStream2> {
     };
 
     Ok(quote! {
-        unsafe impl #impl_generics ::ref_cast::__private::RefCastCustom<#from> for #name #ty_generics #where_clause {
-            #assert_trivial_fields
-        }
+        const _: () = {
+            #[non_exhaustive]
+            #vis struct RefCastCurrentCrate {}
+
+            unsafe impl #impl_generics ::ref_cast::__private::RefCastCustom<#from> for #name #ty_generics #where_clause {
+                type CurrentCrate = RefCastCurrentCrate;
+                #assert_trivial_fields
+            }
+        };
     })
 }
 
@@ -335,9 +342,14 @@ fn expand_function_body(function: Function) -> TokenStream2 {
         #(#attrs)*
         #vis #constness #asyncness #unsafety #abi
         #fn_token #ident #generics #args #arrow_token #to_type {
+            // check lifetime
             let _ = || {
                 ::ref_cast::__private::ref_cast_custom::<#from_type, #to_type>(#arg);
             };
+
+            // check same crate
+            let _ = ::ref_cast::__private::CurrentCrate::<#from_type, #to_type> {};
+
             unsafe {
                 ::ref_cast::__private::transmute::<#from_type, #to_type>(#arg)
             }

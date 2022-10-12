@@ -140,13 +140,16 @@
 #![allow(
     clippy::manual_assert,
     clippy::missing_panics_doc,
-    clippy::module_name_repetitions
+    clippy::missing_safety_doc,
+    clippy::module_name_repetitions,
+    clippy::needless_pass_by_value
 )]
 
+mod custom;
 mod layout;
 mod trivial;
 
-pub use ref_cast_impl::RefCast;
+pub use ref_cast_impl::{ref_cast_custom, RefCast, RefCastCustom};
 
 /// Safely cast `&T` to `&U` where the struct `U` contains a single field of
 /// type `T`.
@@ -177,6 +180,8 @@ pub trait RefCast {
 // Not public API.
 #[doc(hidden)]
 pub mod __private {
+    pub use crate::custom::{ref_cast_custom, RefCastCustom};
     pub use crate::layout::{assert_layout, Layout, LayoutUnsized};
     pub use crate::trivial::assert_trivial;
+    pub use core::mem::transmute;
 }

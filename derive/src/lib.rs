@@ -11,6 +11,45 @@ use syn::{
     parse_macro_input, token, Data, DeriveInput, Error, Expr, Field, Path, Result, Token, Type,
 };
 
+/// Derive the `RefCast` trait.
+///
+/// See the [crate-level documentation](./index.html) for usage examples!
+///
+/// # Attributes
+///
+/// Use the `#[trivial]` attribute to mark any zero-sized fields that are *not*
+/// the one that references are going to be converted from.
+///
+/// ```
+/// use ref_cast::RefCast;
+/// use std::marker::PhantomData;
+///
+/// #[derive(RefCast)]
+/// #[repr(transparent)]
+/// pub struct Generic<T, U> {
+///     raw: Vec<U>,
+///     #[trivial]
+///     aux: Variance<T, U>,
+/// }
+///
+/// type Variance<T, U> = PhantomData<fn(T) -> U>;
+/// ```
+///
+/// Fields with a type named `PhantomData` or `PhantomPinned` are automatically
+/// recognized and do not need to be marked with this attribute.
+///
+/// ```
+/// use ref_cast::RefCast;
+/// use std::marker::{PhantomData, PhantomPinned};
+///
+/// #[derive(RefCast)]  // generates a conversion from &[u8] to &Bytes<'_>
+/// #[repr(transparent)]
+/// pub struct Bytes<'arena> {
+///     lifetime: PhantomData<&'arena ()>,
+///     pin: PhantomPinned,
+///     bytes: [u8],
+/// }
+/// ```
 #[proc_macro_derive(RefCast, attributes(trivial))]
 pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);

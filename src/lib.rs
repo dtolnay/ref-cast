@@ -167,7 +167,7 @@ pub use ref_cast_impl::RefCast;
 /// }
 /// ```
 ///
-/// See the crate-level documentation for usage examples!
+/// See the [crate-level documentation][crate] for usage examples!
 pub trait RefCast {
     type From: ?Sized;
     fn ref_cast(from: &Self::From) -> &Self;

@@ -1,0 +1,12 @@
+[package]
+name = "ref-cast-test-suite"
+authors = ["David Tolnay <dtolnay@gmail.com>"]
+version = "0.0.0"
+edition = "2018"
+publish = false
+
+[lib]
+path = "lib.rs"
+
+[dependencies]
+ref-cast = "1"

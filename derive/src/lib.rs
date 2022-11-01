@@ -344,8 +344,17 @@ fn expand_function_body(function: Function) -> TokenStream2 {
         None
     };
 
+    let mut inline_attr = Some(quote!(#[inline]));
+    for attr in &attrs {
+        if attr.path.is_ident("inline") {
+            inline_attr = None;
+            break;
+        }
+    }
+
     quote_spanned! {semi_token.span=>
         #(#attrs)*
+        #inline_attr
         #vis #constness #asyncness #unsafety #abi
         #fn_token #ident #generics #args #arrow_token #to_type {
             // check lifetime

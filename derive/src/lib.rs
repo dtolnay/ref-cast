@@ -338,6 +338,12 @@ fn expand_function_body(function: Function) -> TokenStream2 {
         (#arg #colon_token #from_type)
     };
 
+    let allow_unused_unsafe = if unsafety.is_some() {
+        Some(quote!(#[allow(unused_unsafe)]))
+    } else {
+        None
+    };
+
     quote_spanned! {semi_token.span=>
         #(#attrs)*
         #vis #constness #asyncness #unsafety #abi
@@ -350,6 +356,7 @@ fn expand_function_body(function: Function) -> TokenStream2 {
             // check same crate
             let _ = ::ref_cast::__private::CurrentCrate::<#from_type, #to_type> {};
 
+            #allow_unused_unsafe // in case they are building with deny(unsafe_op_in_unsafe_fn)
             unsafe {
                 ::ref_cast::__private::transmute::<#from_type, #to_type>(#arg)
             }

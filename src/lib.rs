@@ -135,7 +135,7 @@
 //! }
 //! ```
 
-#![doc(html_root_url = "https://docs.rs/ref-cast/1.0.13")]
+#![doc(html_root_url = "https://docs.rs/ref-cast/1.0.14")]
 #![no_std]
 #![allow(
     clippy::manual_assert,

@@ -21,6 +21,9 @@ trybuild = { version = "1.0.52", features = ["diff"] }
 [workspace]
 members = ["derive", "tests/helper"]
 
+[lib]
+doc-scrape-examples = false
+
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]
 

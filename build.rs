@@ -17,6 +17,10 @@ fn main() {
     if minor < 38 {
         println!("cargo:rustc-cfg=no_intrinsic_type_name");
     }
+
+    if minor < 51 {
+        println!("cargo:rustc-cfg=no_const_generics");
+    }
 }
 
 fn rustc_minor_version() -> Option<u32> {

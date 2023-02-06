@@ -15,6 +15,26 @@ where
     }
 }
 
+#[cfg(not(no_const_generics))]
+macro_rules! hide_from_old_rustc {
+    ($($tt:tt)*) => {
+        $($tt)*
+    };
+}
+
+#[cfg(not(no_const_generics))]
+hide_from_old_rustc! {
+    unsafe impl<From, To, const N: usize> RefCastCustom<[From; N]> for [To; N]
+    where
+        To: RefCastCustom<From>,
+    {
+        type CurrentCrate = To::CurrentCrate;
+        fn __static_assert() {
+            To::__static_assert();
+        }
+    }
+}
+
 pub unsafe trait RefCastOkay<From>: Sealed<From> {
     type CurrentCrate;
     type Target: ?Sized;

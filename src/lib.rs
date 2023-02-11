@@ -138,6 +138,7 @@
 #![doc(html_root_url = "https://docs.rs/ref-cast/1.0.14")]
 #![no_std]
 #![allow(
+    clippy::extra_unused_type_parameters,
     clippy::manual_assert,
     clippy::missing_panics_doc,
     clippy::missing_safety_doc,

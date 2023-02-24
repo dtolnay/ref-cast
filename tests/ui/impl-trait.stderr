@@ -10,13 +10,13 @@ help: consider using the `'static` lifetime
 9 |     pub fn ref_cast(s: impl AsRef<str>) -> &'static Self;
   |                                             +++++++
 
-error[E0562]: `impl Trait` only allowed in function and inherent method return types, not in path
+error[E0562]: `impl Trait` only allowed in function and inherent method return types, not in paths
  --> tests/ui/impl-trait.rs:9:24
   |
 9 |     pub fn ref_cast(s: impl AsRef<str>) -> &Self;
   |                        ^^^^^^^^^^^^^^^
 
-error[E0562]: `impl Trait` only allowed in function and inherent method return types, not in path
+error[E0562]: `impl Trait` only allowed in function and inherent method return types, not in paths
   --> tests/ui/impl-trait.rs:12:26
    |
 12 |     pub fn ref_cast2(s: &impl AsRef<str>) -> &Self;

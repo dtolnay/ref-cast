@@ -139,6 +139,7 @@
 #![no_std]
 #![allow(
     clippy::extra_unused_type_parameters,
+    clippy::let_underscore_untyped,
     clippy::manual_assert,
     clippy::missing_panics_doc,
     clippy::missing_safety_doc,

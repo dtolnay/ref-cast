@@ -9,7 +9,7 @@ use syn::parse::{Nothing, ParseStream, Parser};
 use syn::punctuated::Punctuated;
 use syn::{
     parenthesized, parse_macro_input, token, Abi, Attribute, Data, DeriveInput, Error, Expr, Field,
-    Generics, Path, Result, Token, Type, Visibility,
+    Generics, Meta, Path, Result, Token, Type, Visibility,
 };
 
 /// Derive the `RefCast` trait.
@@ -346,7 +346,7 @@ fn expand_function_body(function: Function) -> TokenStream2 {
 
     let mut inline_attr = Some(quote!(#[inline]));
     for attr in &attrs {
-        if attr.path.is_ident("inline") {
+        if attr.path().is_ident("inline") {
             inline_attr = None;
             break;
         }
@@ -382,7 +382,7 @@ fn check_repr(input: &DeriveInput) -> Result<()> {
     };
 
     for attr in &input.attrs {
-        if attr.path.is_ident("repr") {
+        if attr.path().is_ident("repr") {
             if let Err(error) = attr.parse_args_with(|input: ParseStream| {
                 while !input.is_empty() {
                     let path = input.call(Path::parse_mod_style)?;
@@ -518,10 +518,22 @@ fn is_implicit_trivial(field: &Field) -> Result<bool> {
 
 fn is_explicit_trivial(field: &Field) -> Result<bool> {
     for attr in &field.attrs {
-        if attr.path.is_ident("trivial") {
-            syn::parse2::<Nothing>(attr.tokens.clone())?;
+        if attr.path().is_ident("trivial") {
+            require_empty_attribute(attr)?;
             return Ok(true);
         }
     }
     Ok(false)
+}
+
+fn require_empty_attribute(attr: &Attribute) -> Result<()> {
+    let error_span = match &attr.meta {
+        Meta::Path(_) => return Ok(()),
+        Meta::List(meta) => meta.delimiter.span().open(),
+        Meta::NameValue(meta) => meta.eq_token.span,
+    };
+    Err(Error::new(
+        error_span,
+        "unexpected token in ref-cast attribute",
+    ))
 }

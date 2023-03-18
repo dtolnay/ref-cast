@@ -1,3 +1,5 @@
+#![allow(clippy::manual_non_exhaustive)]
+
 use ref_cast::RefCast;
 use std::marker::PhantomData;
 

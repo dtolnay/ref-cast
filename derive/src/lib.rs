@@ -9,7 +9,7 @@ use syn::parse::{Nothing, ParseStream, Parser};
 use syn::punctuated::Punctuated;
 use syn::{
     parenthesized, parse_macro_input, token, Abi, Attribute, Data, DeriveInput, Error, Expr, Field,
-    Generics, Meta, Path, Result, Token, Type, Visibility,
+    Generics, Path, Result, Token, Type, Visibility,
 };
 
 /// Derive the `RefCast` trait.
@@ -519,21 +519,9 @@ fn is_implicit_trivial(field: &Field) -> Result<bool> {
 fn is_explicit_trivial(field: &Field) -> Result<bool> {
     for attr in &field.attrs {
         if attr.path().is_ident("trivial") {
-            require_empty_attribute(attr)?;
+            attr.meta.require_path_only()?;
             return Ok(true);
         }
     }
     Ok(false)
-}
-
-fn require_empty_attribute(attr: &Attribute) -> Result<()> {
-    let error_span = match &attr.meta {
-        Meta::Path(_) => return Ok(()),
-        Meta::List(meta) => meta.delimiter.span().open(),
-        Meta::NameValue(meta) => meta.eq_token.span,
-    };
-    Err(Error::new(
-        error_span,
-        "unexpected token in ref-cast attribute",
-    ))
 }

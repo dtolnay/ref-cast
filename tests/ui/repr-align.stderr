@@ -1,22 +1,14 @@
 error: aligned repr on struct that implements RefCast is not supported
  --> tests/ui/repr-align.rs:4:8
   |
-3 | #[derive(RefCast)]
-  |          ------- in this derive macro expansion
 4 | #[repr(align(2), C, align = "2")]
   |        ^^^^^^^^
-  |
-  = note: this error originates in the derive macro `RefCast` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: aligned repr on struct that implements RefCast is not supported
  --> tests/ui/repr-align.rs:4:21
   |
-3 | #[derive(RefCast)]
-  |          ------- in this derive macro expansion
 4 | #[repr(align(2), C, align = "2")]
   |                     ^^^^^^^^^^^
-  |
-  = note: this error originates in the derive macro `RefCast` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0693]: incorrect `repr(align)` attribute format
  --> tests/ui/repr-align.rs:4:21

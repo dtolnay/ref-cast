@@ -1,20 +1,32 @@
 error: unrecognized repr on struct that implements RefCast
  --> tests/ui/unrecognized-repr.rs:4:19
   |
+3 | #[derive(RefCast)]
+  |          ------- in this derive macro expansion
 4 | #[repr(packed, C, usize, usize(0), usize = "0")]
   |                   ^^^^^
+  |
+  = note: this error originates in the derive macro `RefCast` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: unrecognized repr on struct that implements RefCast
  --> tests/ui/unrecognized-repr.rs:4:26
   |
+3 | #[derive(RefCast)]
+  |          ------- in this derive macro expansion
 4 | #[repr(packed, C, usize, usize(0), usize = "0")]
   |                          ^^^^^^^^
+  |
+  = note: this error originates in the derive macro `RefCast` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: unrecognized repr on struct that implements RefCast
  --> tests/ui/unrecognized-repr.rs:4:36
   |
+3 | #[derive(RefCast)]
+  |          ------- in this derive macro expansion
 4 | #[repr(packed, C, usize, usize(0), usize = "0")]
   |                                    ^^^^^^^^^^^
+  |
+  = note: this error originates in the derive macro `RefCast` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0552]: invalid representation hint: `usize` does not take a parenthesized argument list
  --> tests/ui/unrecognized-repr.rs:4:26

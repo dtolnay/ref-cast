@@ -1,8 +1,12 @@
 error: ref_cast_custom function is required to have a single argument
  --> tests/ui/extra-arg.rs:9:33
   |
+8 |     #[ref_cast_custom]
+  |     ------------------ in this procedural macro expansion
 9 |     pub fn ref_cast(s: &String, wat: i32) -> &Self;
   |                                 ^^^^^^^^
+  |
+  = note: this error originates in the attribute macro `ref_cast_custom` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: associated function in `impl` without body
  --> tests/ui/extra-arg.rs:9:5

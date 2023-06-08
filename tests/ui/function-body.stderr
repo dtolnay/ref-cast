@@ -1,8 +1,12 @@
 error: expected `;`
  --> tests/ui/function-body.rs:9:42
   |
+8 |     #[ref_cast_custom]
+  |     ------------------ in this procedural macro expansion
 9 |     pub fn ref_cast(s: &String) -> &Self {}
   |                                          ^
+  |
+  = note: this error originates in the attribute macro `ref_cast_custom` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0308]: mismatched types
  --> tests/ui/function-body.rs:9:36

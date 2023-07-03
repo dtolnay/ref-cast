@@ -2,7 +2,7 @@
 name = "ref-cast"
 version = "1.0.16" # remember to update html_root_url
 authors = ["David Tolnay <dtolnay@gmail.com>"]
-categories = ["rust-patterns", "no-std"]
+categories = ["rust-patterns", "no-std", "no-std::no-alloc"]
 description = "Safely cast &T to &U where the struct U contains a single field of type T."
 documentation = "https://docs.rs/ref-cast"
 edition = "2018"

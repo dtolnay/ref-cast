@@ -2,7 +2,7 @@
 name = "ref-cast-test-suite"
 authors = ["David Tolnay <dtolnay@gmail.com>"]
 version = "0.0.0"
-edition = "2018"
+edition = "2021"
 publish = false
 
 [lib]

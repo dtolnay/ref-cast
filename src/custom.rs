@@ -5,6 +5,7 @@ pub unsafe trait RefCastCustom<From: ?Sized> {
     fn __static_assert() {}
 }
 
+#[doc(hidden)]
 pub unsafe trait RefCastOkay<From>: Sealed<From> {
     type CurrentCrate;
     type Target: ?Sized;
@@ -28,6 +29,7 @@ where
     type Target = To;
 }
 
+#[doc(hidden)]
 pub trait Sealed<From> {}
 
 impl<'a, From, To> Sealed<&'a From> for &'a To
@@ -44,8 +46,10 @@ where
 {
 }
 
+#[doc(hidden)]
 pub type CurrentCrate<From, To> = <To as RefCastOkay<From>>::CurrentCrate;
 
+#[doc(hidden)]
 pub fn ref_cast_custom<From, To>(_arg: From)
 where
     To: RefCastOkay<From>,

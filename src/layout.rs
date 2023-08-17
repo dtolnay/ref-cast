@@ -1,7 +1,9 @@
 use core::{mem, usize};
 
+#[doc(hidden)]
 pub struct Layout<T: ?Sized>(T);
 
+#[doc(hidden)]
 pub trait LayoutUnsized<T: ?Sized> {
     const SIZE: usize = usize::MAX;
     const ALIGN: usize = usize::MAX;
@@ -14,6 +16,7 @@ impl<T> Layout<T> {
     pub const ALIGN: usize = mem::align_of::<T>();
 }
 
+#[doc(hidden)]
 #[inline]
 pub fn assert_layout<Outer: ?Sized, Inner: ?Sized>(
     name: &'static str,

@@ -144,6 +144,7 @@
     clippy::missing_panics_doc,
     clippy::missing_safety_doc,
     clippy::module_name_repetitions,
+    clippy::needless_doctest_main,
     clippy::needless_pass_by_value
 )]
 

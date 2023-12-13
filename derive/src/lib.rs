@@ -352,9 +352,14 @@ fn expand_function_body(function: Function) -> TokenStream2 {
         }
     }
 
-    // Do not apply the caller's span to our "unsafe" token. Otherwise
-    // `forbid(unsafe_code)` at caller would reject the expanded code.
-    let our_unsafe = quote!(unsafe);
+    // Apply a macro-generated span to the "unsafe" token for the unsafe block.
+    // This is instead of reusing the caller's function signature's #unsafety
+    // across both the generated function signature and generated unsafe block,
+    // and instead of using `semi_token.span` like for the rest of the generated
+    // code below, both of which would cause `forbid(unsafe_code)` located in
+    // the caller to reject the expanded code.
+    let macro_generated_unsafe = quote!(unsafe);
+
     quote_spanned! {semi_token.span=>
         #(#attrs)*
         #inline_attr
@@ -370,7 +375,7 @@ fn expand_function_body(function: Function) -> TokenStream2 {
 
             #allow_unused_unsafe // in case they are building with deny(unsafe_op_in_unsafe_fn)
             #[allow(clippy::transmute_ptr_to_ptr)]
-            #our_unsafe {
+            #macro_generated_unsafe {
                 ::ref_cast::__private::transmute::<#from_type, #to_type>(#arg)
             }
         }

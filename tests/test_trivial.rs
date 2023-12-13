@@ -42,6 +42,20 @@ pub struct Unsized<'a> {
     pub value: str,
 }
 
+#[forbid(unsafe_code)]
+mod forbid_unsafe {
+    use ref_cast::{ref_cast_custom, RefCastCustom};
+
+    #[derive(RefCastCustom)]
+    #[repr(transparent)]
+    pub struct Custom(str);
+
+    impl Custom {
+        #[ref_cast_custom]
+        pub fn new(s: &str) -> &Custom;
+    }
+}
+
 #[test]
 fn test_trivial() {
     ImplicitUnit::ref_cast(&0);
@@ -49,4 +63,5 @@ fn test_trivial() {
     ExplicitTrivial::ref_cast(&0);
     Override::<u8, i8>::ref_cast(&PhantomData::<i8>);
     Unsized::ref_cast("...");
+    forbid_unsafe::Custom::new("...");
 }

@@ -1,4 +1,8 @@
-#![allow(clippy::needless_pass_by_value, clippy::if_not_else)]
+#![allow(
+    clippy::blocks_in_conditions,
+    clippy::needless_pass_by_value,
+    clippy::if_not_else
+)]
 
 extern crate proc_macro;
 

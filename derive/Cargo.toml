@@ -1,6 +1,6 @@
 [package]
 name = "ref-cast-impl"
-version = "1.0.21"
+version = "1.0.22"
 authors = ["David Tolnay <dtolnay@gmail.com>"]
 description = "Derive implementation for ref_cast::RefCast."
 documentation = "https://docs.rs/ref-cast"

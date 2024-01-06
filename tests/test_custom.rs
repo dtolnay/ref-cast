@@ -4,7 +4,7 @@ mod forbid_unsafe {
 
     #[derive(RefCastCustom)]
     #[repr(transparent)]
-    pub struct Custom(str);
+    pub struct Custom(#[allow(dead_code)] str);
 
     impl Custom {
         #[ref_cast_custom]

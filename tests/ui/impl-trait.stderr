@@ -14,14 +14,18 @@ help: consider introducing a named lifetime parameter
 9 |     pub fn ref_cast<'a>(s: impl AsRef<str>) -> &'a Self;
   |                    ++++                        ~~~
 
-error[E0562]: `impl Trait` only allowed in function and inherent method argument and return types, not in paths
+error[E0562]: `impl Trait` is not allowed in paths
  --> tests/ui/impl-trait.rs:9:24
   |
 9 |     pub fn ref_cast(s: impl AsRef<str>) -> &Self;
   |                        ^^^^^^^^^^^^^^^
+  |
+  = note: `impl Trait` is only allowed in arguments and return types of functions and methods
 
-error[E0562]: `impl Trait` only allowed in function and inherent method argument and return types, not in paths
+error[E0562]: `impl Trait` is not allowed in paths
   --> tests/ui/impl-trait.rs:12:26
    |
 12 |     pub fn ref_cast2(s: &impl AsRef<str>) -> &Self;
    |                          ^^^^^^^^^^^^^^^
+   |
+   = note: `impl Trait` is only allowed in arguments and return types of functions and methods

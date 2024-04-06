@@ -1,4 +1,4 @@
-use core::{mem, usize};
+use core::mem;
 
 #[doc(hidden)]
 pub struct Layout<T: ?Sized>(T);

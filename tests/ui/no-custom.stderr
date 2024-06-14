@@ -2,7 +2,7 @@ error[E0277]: the trait bound `&Thing: ref_cast::custom::RefCastOkay<&String>` i
  --> tests/ui/no-custom.rs:8:36
   |
 8 |     pub fn ref_cast(s: &String) -> &Self;
-  |                                    ^^^^^ the trait `RefCastCustom<String>` is not implemented for `&Thing`, which is required by `&Thing: ref_cast::custom::RefCastOkay<&String>`
+  |                                    ^^^^^ the trait `RefCastCustom<String>` is not implemented for `Thing`, which is required by `&Thing: ref_cast::custom::RefCastOkay<&String>`
   |
   = help: the following other types implement trait `ref_cast::custom::RefCastOkay<From>`:
             <&'a To as ref_cast::custom::RefCastOkay<&'a From>>

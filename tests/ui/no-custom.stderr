@@ -5,8 +5,8 @@ error[E0277]: the trait bound `&Thing: ref_cast::custom::RefCastOkay<&String>` i
   |                                    ^^^^^ the trait `RefCastCustom<String>` is not implemented for `Thing`, which is required by `&Thing: ref_cast::custom::RefCastOkay<&String>`
   |
   = help: the following other types implement trait `ref_cast::custom::RefCastOkay<From>`:
-            <&'a To as ref_cast::custom::RefCastOkay<&'a From>>
-            <&'a mut To as ref_cast::custom::RefCastOkay<&'a mut From>>
+            `&'a To` implements `ref_cast::custom::RefCastOkay<&'a From>`
+            `&'a mut To` implements `ref_cast::custom::RefCastOkay<&'a mut From>`
   = note: required for `&Thing` to implement `ref_cast::custom::RefCastOkay<&String>`
 note: required by a bound in `ref_cast_custom`
  --> src/custom.rs
@@ -30,6 +30,6 @@ error[E0277]: the trait bound `Thing: RefCastCustom<String>` is not satisfied
   |                                         ^ the trait `RefCastCustom<String>` is not implemented for `Thing`, which is required by `&Thing: ref_cast::custom::RefCastOkay<&String>`
   |
   = help: the following other types implement trait `ref_cast::custom::RefCastOkay<From>`:
-            <&'a To as ref_cast::custom::RefCastOkay<&'a From>>
-            <&'a mut To as ref_cast::custom::RefCastOkay<&'a mut From>>
+            `&'a To` implements `ref_cast::custom::RefCastOkay<&'a From>`
+            `&'a mut To` implements `ref_cast::custom::RefCastOkay<&'a mut From>`
   = note: required for `&Thing` to implement `ref_cast::custom::RefCastOkay<&String>`

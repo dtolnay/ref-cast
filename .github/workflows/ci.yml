@@ -40,6 +40,7 @@ jobs:
         with:
           name: Cargo.lock
           path: Cargo.lock
+        continue-on-error: true
 
   msrv:
     name: Rust 1.56.0

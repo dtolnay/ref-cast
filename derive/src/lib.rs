@@ -58,7 +58,7 @@ use syn::{
 #[proc_macro_derive(RefCast, attributes(trivial))]
 pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    expand_ref_cast(input)
+    expand_ref_cast(&input)
         .unwrap_or_else(Error::into_compile_error)
         .into()
 }
@@ -72,7 +72,7 @@ pub fn derive_ref_cast(input: TokenStream) -> TokenStream {
 #[proc_macro_derive(RefCastCustom, attributes(trivial))]
 pub fn derive_ref_cast_custom(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    expand_ref_cast_custom(input)
+    expand_ref_cast_custom(&input)
         .unwrap_or_else(Error::into_compile_error)
         .into()
 }
@@ -211,14 +211,14 @@ struct Function {
     semi_token: Token![;],
 }
 
-fn expand_ref_cast(input: DeriveInput) -> Result<TokenStream2> {
-    check_repr(&input)?;
+fn expand_ref_cast(input: &DeriveInput) -> Result<TokenStream2> {
+    check_repr(input)?;
 
     let name = &input.ident;
     let name_str = name.to_string();
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
 
-    let fields = fields(&input)?;
+    let fields = fields(input)?;
     let from = only_field_ty(fields)?;
     let trivial = trivial_fields(fields)?;
 
@@ -280,14 +280,14 @@ fn expand_ref_cast(input: DeriveInput) -> Result<TokenStream2> {
     })
 }
 
-fn expand_ref_cast_custom(input: DeriveInput) -> Result<TokenStream2> {
-    check_repr(&input)?;
+fn expand_ref_cast_custom(input: &DeriveInput) -> Result<TokenStream2> {
+    check_repr(input)?;
 
     let vis = &input.vis;
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
 
-    let fields = fields(&input)?;
+    let fields = fields(input)?;
     let from = only_field_ty(fields)?;
     let trivial = trivial_fields(fields)?;
 

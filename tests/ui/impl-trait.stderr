@@ -11,9 +11,8 @@ help: consider using the `'static` lifetime, but this is uncommon unless you're 
   |                                             +++++++
 help: consider introducing a named lifetime parameter
   |
-9 -     pub fn ref_cast(s: impl AsRef<str>) -> &Self;
-9 +     pub fn ref_cast<'a>(s: impl AsRef<str>) -> &'a Self;
-  |
+9 |     pub fn ref_cast<'a>(s: impl AsRef<str>) -> &'a Self;
+  |                    ++++                         ++
 
 error[E0562]: `impl Trait` is not allowed in paths
  --> tests/ui/impl-trait.rs:9:24

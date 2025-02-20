@@ -52,7 +52,7 @@
 //! forced to be borrowed from the type being indexed. So something like the
 //! following is not going to work.
 //!
-//! [`Index`]: https://doc.rust-lang.org/std/ops/trait.Index.html
+//! [`Index`]: core::ops::Index
 //!
 //! ```
 //! # const MAP_WIDTH: usize = 4;

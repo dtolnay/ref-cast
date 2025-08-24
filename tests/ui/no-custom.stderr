@@ -2,8 +2,13 @@ error[E0277]: the trait bound `&Thing: ref_cast::custom::RefCastOkay<&String>` i
  --> tests/ui/no-custom.rs:8:36
   |
 8 |     pub fn ref_cast(s: &String) -> &Self;
-  |                                    ^^^^^ the trait `RefCastCustom<String>` is not implemented for `Thing`
+  |                                    ^^^^^ unsatisfied trait bound
   |
+help: the trait `RefCastCustom<String>` is not implemented for `Thing`
+ --> tests/ui/no-custom.rs:4:1
+  |
+4 | pub struct Thing(String);
+  | ^^^^^^^^^^^^^^^^
   = help: the following other types implement trait `ref_cast::custom::RefCastOkay<From>`:
             `&'a To` implements `ref_cast::custom::RefCastOkay<&'a From>`
             `&'a mut To` implements `ref_cast::custom::RefCastOkay<&'a mut From>`
@@ -27,8 +32,13 @@ error[E0277]: the trait bound `Thing: RefCastCustom<String>` is not satisfied
  --> tests/ui/no-custom.rs:8:41
   |
 8 |     pub fn ref_cast(s: &String) -> &Self;
-  |                                         ^ the trait `RefCastCustom<String>` is not implemented for `Thing`
+  |                                         ^ unsatisfied trait bound
   |
+help: the trait `RefCastCustom<String>` is not implemented for `Thing`
+ --> tests/ui/no-custom.rs:4:1
+  |
+4 | pub struct Thing(String);
+  | ^^^^^^^^^^^^^^^^
   = help: the following other types implement trait `ref_cast::custom::RefCastOkay<From>`:
             `&'a To` implements `ref_cast::custom::RefCastOkay<&'a From>`
             `&'a mut To` implements `ref_cast::custom::RefCastOkay<&'a mut From>`

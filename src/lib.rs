@@ -180,15 +180,6 @@ pub trait RefCast {
     fn ref_cast_mut(from: &mut Self::From) -> &mut Self;
 }
 
-// Not public API.
-#[doc(hidden)]
-pub mod __private {
-    #[doc(hidden)]
-    pub use crate::custom::{ref_cast_custom, CurrentCrate, RefCastCustom};
-    #[doc(hidden)]
-    pub use crate::layout::{assert_layout, Layout, LayoutUnsized};
-    #[doc(hidden)]
-    pub use crate::trivial::assert_trivial;
-    #[doc(hidden)]
-    pub use core::mem::transmute;
-}
+mod private;
+
+include!(concat!(env!("OUT_DIR"), "/private.rs"));

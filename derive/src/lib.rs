@@ -8,7 +8,7 @@ extern crate proc_macro;
 
 use proc_macro::TokenStream;
 use proc_macro2::{Ident, Span, TokenStream as TokenStream2, TokenTree};
-use quote::{quote, quote_spanned};
+use quote::{quote, quote_spanned, ToTokens, TokenStreamExt as _};
 use syn::parse::{Nothing, ParseStream, Parser};
 use syn::punctuated::Punctuated;
 use syn::{
@@ -192,6 +192,18 @@ pub fn ref_cast_custom(args: TokenStream, input: TokenStream) -> TokenStream {
     TokenStream::from(expanded)
 }
 
+#[allow(non_camel_case_types)]
+struct private;
+
+impl ToTokens for private {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        tokens.append(Ident::new(
+            concat!("__private", env!("CARGO_PKG_VERSION_PATCH")),
+            Span::call_site(),
+        ));
+    }
+}
+
 struct Function {
     attrs: Vec<Attribute>,
     vis: Visibility,
@@ -221,12 +233,13 @@ fn expand_ref_cast(input: &DeriveInput) -> Result<TokenStream2> {
     let fields = fields(input)?;
     let from = only_field_ty(fields)?;
     let trivial = trivial_fields(fields)?;
+    let private2 = private;
 
     let assert_trivial_fields = if !trivial.is_empty() {
         Some(quote! {
             if false {
                 #(
-                    ::ref_cast::__private::assert_trivial::<#trivial>();
+                    ::ref_cast::#private2::assert_trivial::<#trivial>();
                 )*
             }
         })
@@ -244,13 +257,13 @@ fn expand_ref_cast(input: &DeriveInput) -> Result<TokenStream2> {
                 #[cfg(debug_assertions)]
                 {
                     #[allow(unused_imports)]
-                    use ::ref_cast::__private::LayoutUnsized;
-                    ::ref_cast::__private::assert_layout::<Self, Self::From>(
+                    use ::ref_cast::#private::LayoutUnsized;
+                    ::ref_cast::#private::assert_layout::<Self, Self::From>(
                         #name_str,
-                        ::ref_cast::__private::Layout::<Self>::SIZE,
-                        ::ref_cast::__private::Layout::<Self::From>::SIZE,
-                        ::ref_cast::__private::Layout::<Self>::ALIGN,
-                        ::ref_cast::__private::Layout::<Self::From>::ALIGN,
+                        ::ref_cast::#private::Layout::<Self>::SIZE,
+                        ::ref_cast::#private::Layout::<Self::From>::SIZE,
+                        ::ref_cast::#private::Layout::<Self>::ALIGN,
+                        ::ref_cast::#private::Layout::<Self::From>::ALIGN,
                     );
                 }
                 unsafe {
@@ -263,13 +276,13 @@ fn expand_ref_cast(input: &DeriveInput) -> Result<TokenStream2> {
                 #[cfg(debug_assertions)]
                 {
                     #[allow(unused_imports)]
-                    use ::ref_cast::__private::LayoutUnsized;
-                    ::ref_cast::__private::assert_layout::<Self, Self::From>(
+                    use ::ref_cast::#private::LayoutUnsized;
+                    ::ref_cast::#private::assert_layout::<Self, Self::From>(
                         #name_str,
-                        ::ref_cast::__private::Layout::<Self>::SIZE,
-                        ::ref_cast::__private::Layout::<Self::From>::SIZE,
-                        ::ref_cast::__private::Layout::<Self>::ALIGN,
-                        ::ref_cast::__private::Layout::<Self::From>::ALIGN,
+                        ::ref_cast::#private::Layout::<Self>::SIZE,
+                        ::ref_cast::#private::Layout::<Self::From>::SIZE,
+                        ::ref_cast::#private::Layout::<Self>::ALIGN,
+                        ::ref_cast::#private::Layout::<Self::From>::ALIGN,
                     );
                 }
                 unsafe {
@@ -290,13 +303,14 @@ fn expand_ref_cast_custom(input: &DeriveInput) -> Result<TokenStream2> {
     let fields = fields(input)?;
     let from = only_field_ty(fields)?;
     let trivial = trivial_fields(fields)?;
+    let private2 = private;
 
     let assert_trivial_fields = if !trivial.is_empty() {
         Some(quote! {
             fn __static_assert() {
                 if false {
                     #(
-                        ::ref_cast::__private::assert_trivial::<#trivial>();
+                        ::ref_cast::#private2::assert_trivial::<#trivial>();
                     )*
                 }
             }
@@ -310,7 +324,7 @@ fn expand_ref_cast_custom(input: &DeriveInput) -> Result<TokenStream2> {
             #[non_exhaustive]
             #vis struct RefCastCurrentCrate {}
 
-            unsafe impl #impl_generics ::ref_cast::__private::RefCastCustom<#from> for #name #ty_generics #where_clause {
+            unsafe impl #impl_generics ::ref_cast::#private::RefCastCustom<#from> for #name #ty_generics #where_clause {
                 type CurrentCrate = RefCastCurrentCrate;
                 #assert_trivial_fields
             }
@@ -371,16 +385,16 @@ fn expand_function_body(function: Function) -> TokenStream2 {
         #fn_token #ident #generics #args #arrow_token #to_type {
             // check lifetime
             let _ = || {
-                ::ref_cast::__private::ref_cast_custom::<#from_type, #to_type>(#arg);
+                ::ref_cast::#private::ref_cast_custom::<#from_type, #to_type>(#arg);
             };
 
             // check same crate
-            let _ = ::ref_cast::__private::CurrentCrate::<#from_type, #to_type> {};
+            let _ = ::ref_cast::#private::CurrentCrate::<#from_type, #to_type> {};
 
             #allow_unused_unsafe // in case they are building with deny(unsafe_op_in_unsafe_fn)
             #[allow(clippy::transmute_ptr_to_ptr)]
             #macro_generated_unsafe {
-                ::ref_cast::__private::transmute::<#from_type, #to_type>(#arg)
+                ::ref_cast::#private::transmute::<#from_type, #to_type>(#arg)
             }
         }
     }

@@ -9,6 +9,7 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/dtolnay/ref-cast"
 rust-version = "1.61"
+include = ["src/**/*.rs", "build.rs", "Cargo.toml", "LICENSE-APACHE", "LICENSE-MIT", "README.md", "tests/test_*.rs"]
 
 [dependencies]
 ref-cast-impl = { version = "=1.0.25", path = "derive" }

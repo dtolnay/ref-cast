@@ -9,9 +9,20 @@ help: the trait `RefCastCustom<String>` is not implemented for `Thing`
   |
 4 | pub struct Thing(String);
   | ^^^^^^^^^^^^^^^^
-  = help: the following other types implement trait `ref_cast::custom::RefCastOkay<From>`:
-            `&'a To` implements `ref_cast::custom::RefCastOkay<&'a From>`
-            `&'a mut To` implements `ref_cast::custom::RefCastOkay<&'a mut From>`
+help: the following other types implement trait `ref_cast::custom::RefCastOkay<From>`
+ --> src/custom.rs
+  |
+  | / unsafe impl<'a, From, To> RefCastOkay<&'a From> for &'a To
+  | | where
+  | |     From: ?Sized,
+  | |     To: ?Sized + RefCastCustom<From>,
+  | |_____________________________________^ `&'a To` implements `ref_cast::custom::RefCastOkay<&'a From>`
+...
+  | / unsafe impl<'a, From, To> RefCastOkay<&'a mut From> for &'a mut To
+  | | where
+  | |     From: ?Sized,
+  | |     To: ?Sized + RefCastCustom<From>,
+  | |_____________________________________^ `&'a mut To` implements `ref_cast::custom::RefCastOkay<&'a mut From>`
   = note: required for `&Thing` to implement `ref_cast::custom::RefCastOkay<&String>`
 note: required by a bound in `ref_cast_custom`
  --> src/custom.rs
@@ -39,7 +50,18 @@ help: the trait `RefCastCustom<String>` is not implemented for `Thing`
   |
 4 | pub struct Thing(String);
   | ^^^^^^^^^^^^^^^^
-  = help: the following other types implement trait `ref_cast::custom::RefCastOkay<From>`:
-            `&'a To` implements `ref_cast::custom::RefCastOkay<&'a From>`
-            `&'a mut To` implements `ref_cast::custom::RefCastOkay<&'a mut From>`
+help: the following other types implement trait `ref_cast::custom::RefCastOkay<From>`
+ --> src/custom.rs
+  |
+  | / unsafe impl<'a, From, To> RefCastOkay<&'a From> for &'a To
+  | | where
+  | |     From: ?Sized,
+  | |     To: ?Sized + RefCastCustom<From>,
+  | |_____________________________________^ `&'a To` implements `ref_cast::custom::RefCastOkay<&'a From>`
+...
+  | / unsafe impl<'a, From, To> RefCastOkay<&'a mut From> for &'a mut To
+  | | where
+  | |     From: ?Sized,
+  | |     To: ?Sized + RefCastCustom<From>,
+  | |_____________________________________^ `&'a mut To` implements `ref_cast::custom::RefCastOkay<&'a mut From>`
   = note: required for `&Thing` to implement `ref_cast::custom::RefCastOkay<&String>`

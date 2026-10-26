@@ -21,6 +21,7 @@ error: the `repr(usize)` attribute cannot be used on structs
   |
 4 | #[repr(packed, C, usize, usize(0), usize = "0")]
   |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5 | struct Test {
   |
   = help: the `repr(usize)` attribute can only be applied to enums
 

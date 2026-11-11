@@ -1,11 +1,15 @@
 error[E0639]: cannot create non-exhaustive struct using struct expression
- --> tests/ui/cross-crate.rs:5:32
+ --> tests/ui/cross-crate.rs:4:1
   |
-5 | fn ref_cast(s: &str) -> &Struct;
-  |                                ^
+4 | #[ref_cast_custom]
+  | ^^^^^^^^^^^^^^^^^^
+  |
+  = note: this error originates in the attribute macro `ref_cast_custom` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0639]: cannot create non-exhaustive struct using struct expression
- --> tests/ui/cross-crate.rs:8:44
+ --> tests/ui/cross-crate.rs:7:1
   |
-8 | fn ref_cast_mut(s: &mut str) -> &mut Struct;
-  |                                            ^
+7 | #[ref_cast_custom]
+  | ^^^^^^^^^^^^^^^^^^
+  |
+  = note: this error originates in the attribute macro `ref_cast_custom` (in Nightly builds, run with -Z macro-backtrace for more info)
